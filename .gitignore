@@ -24,3 +24,6 @@ $RECYCLE.BIN/
 
 # Fichero BBDD
 conexion.php
+
+#Directorio archivo
+archivo/*
