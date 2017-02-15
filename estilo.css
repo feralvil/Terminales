@@ -1,0 +1,293 @@
+
+/*
+    Documento   : estilo.css
+    Creado el   : 21 de enero de 2004, 13:20
+    Autor       : falfonso
+    Descripción : Hoja de estilos para la Web de Gestión de los terminales COMDES
+*/
+
+
+/* ----------------- ETIQUETAS GENERALES ----------------- */
+body {
+    color : #000000;
+    font-family : Arial, Helvetica, sans-serif;
+    font-size : 8pt;
+    line-height : 150%;
+  }
+
+
+img {
+    border-bottom-style : none;
+    border-left-style : none;
+    border-right-style : none;
+    border-top-style : none;
+  }
+
+/* ----------------- ETIQUETAS GENERALES ----------------- */
+
+/* ----------------- ENCABEZADOS ----------------- */
+h1 {
+    border-bottom-color : #00407A;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+    color : #00407A;
+    font-size : 10pt;
+    font-weight : bold;
+    line-height : 16px;
+    margin-left : 3px;
+    margin-top : 0px;
+    padding-bottom : 1px;
+    padding-left : 1px;
+    padding-right : 1px;
+    padding-top : 1px;
+    text-align : left;
+    text-indent : 0px;
+    text-transform : uppercase;
+    width : 100%;
+  }
+
+
+h2 {
+    font-size : 9pt;
+    color : #666666;
+  }
+
+
+h3 {
+    font-size : 8pt;
+    color : #00407A;
+  }
+
+
+h4 {
+    font-size : 7pt;
+    color : #00407A;
+  }
+
+/* ----------------- ENCABEZADOS ----------------- */
+
+/* ----------------- TABLAS ----------------- */
+table {
+    width : 100%;
+  }
+
+th {
+    background-color : #00407A;
+    color : #ffffff;
+    font-size : 8pt;
+    font-weight : bold;
+  }
+
+th a{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+td.borde {
+    border-bottom-color : #00407A;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+    text-align : center;
+}
+
+tr.filapar {
+    background-color: #f0f2f5;
+}
+
+.t5c {
+    width : 20%;
+}
+
+.t6c {
+    width : 17%;
+}
+
+.t10c {
+    width : 10%;
+}
+
+.t2c {
+    width : 50%;
+}
+
+.t4c {
+    width : 25%;
+}
+
+.t3c {
+    width : 33%;
+}
+
+.t40p {
+    width : 40%;
+}
+
+.t30p {
+    width : 30%;
+ }
+/* ----------------- TABLAS ----------------- */
+
+.centro {
+    text-align : center;
+}
+
+.error {
+    color : #ff0000;
+    font-weight : bold;
+}
+
+.menu {
+    background-color : #5C743D;
+}
+
+.login {
+    width : 40%;
+}
+
+.logos {
+    width : 60%;
+}
+
+#peticion {
+    background-color : #ffffff;
+    margin-left : 50px;
+    width : 900px;
+  }
+
+#peticion h1 {
+    background-color : #f4ffe4;
+    border-bottom-color : #5c743d;
+    border-bottom-style : solid;
+    border-left-color : #5c743d;
+    border-left-style : solid;
+    border-right-color : #5c743d;
+    border-right-style : solid;
+    border-top-color : #5c743d;
+    border-top-style : solid;
+    margin-left : 10%;
+    margin-top : 10px;
+    text-align : center;
+    width : 80%;
+  }
+
+td {
+    font-size : 8pt;
+}
+
+input {
+    font-size: 8pt;
+}
+
+.flashok{
+    border-right-style: solid;
+    border-left-style: solid;
+    border-bottom-style: solid;
+    border-top-style: solid;
+    border-right-width: 2px;
+    border-left-width: 2px;
+    border-bottom-width: 2px;
+    border-top-width: 2px;
+    text-align: center;
+    background-color: #99ff99;
+    border-right-color: #339900;
+    border-left-color: #339900;
+    border-bottom-color: #339900;
+    border-top-color: #339900;
+    font-weight: bold;
+}
+
+.flashko{
+    border-right-style: solid;
+    border-left-style: solid;
+    border-bottom-style: solid;
+    border-top-style: solid;
+    border-right-width: 2px;
+    border-left-width: 2px;
+    border-bottom-width: 2px;
+    border-top-width: 2px;
+    text-align: center;
+    background-color: #ff6666;
+    border-right-color: #ff0000;
+    border-left-color: #ff0000;
+    border-bottom-color: #ff0000;
+    border-top-color: #ff0000;
+    font-weight: bold;
+}
+
+div.oculto{
+    display: none;
+}
+
+.invisible{
+    display: none;
+}
+
+/* Pestañas */
+ul#tab {
+    list-style:none;
+    margin-left: 30px;
+    margin-top: 10px;
+    padding:0;
+}
+
+ul#tab li {
+    float:left;
+}
+
+ul#tab li a {
+    display: block;
+    width: 150px;
+    height: 15px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    color: #000000;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #999999;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #999999;
+    border-right-color: #999999;
+    border-right-style: solid;
+    border-right-width: 1px;
+}
+
+ul#tab li a:hover {
+    background-color : #00407A;
+    color : #ffffff;
+}
+
+.activo {
+    display: block;
+    width: 150px;
+    height: 15px;
+    background-color: #FFFFFF;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #999999;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #999999;
+    border-right-color: #999999;
+    border-right-style: solid;
+    border-right-width: 1px;
+}
+
+
+#pestanyas{
+    height: 21px;
+    border-bottom-color: #999999;
+    border-bottom-width: thin;
+    border-bottom-style: solid;
+}
+
+#limpia{
+    clear: both;
+}

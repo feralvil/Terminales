@@ -1,0 +1,26 @@
+#############
+## Windows detritus
+#############
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Unit test / coverage reports
+.coverage
+.tox
+
+#Translations
+*.mo
+
+# Sincronización FTP
+.remote-sync.json
+
+# Fichero BBDD
+conexion.php

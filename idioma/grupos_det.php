@@ -1,0 +1,1 @@
+/* Fichero de idiomas para detalle de grupo */
