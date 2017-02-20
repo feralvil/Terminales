@@ -152,6 +152,40 @@ if ($flota_usu == 100) {
             }
         }
 
+        if ($origen == "ordenar"){
+            $enlacefail = $enlaceok = 'contactos_orden.php';
+            $titulo = $titorden;
+            $error = $errorden;
+            $norden = 0;
+            // Seleccionamos contactos:
+            $roles = array('OPERATIVO', 'TECNICO', 'CONT24H');
+            foreach ($roles as $rol) {
+                $sql_contflota = "SELECT * FROM contactos_flotas WHERE (FLOTA_ID = $idflota) AND (ROL = '$rol') ORDER BY ORDEN ASC";
+                $res_contflota = mysql_query($sql_contflota) or die("Error en la consulta de contactos de Flota: " . mysql_error());
+                $ncontflota = mysql_num_rows($res_contflota);
+                $orden = 1;
+                $ordencont = array();
+                for ($i = 0; $i < $ncontflota; $i++){
+                    $row_contflota = mysql_fetch_array($res_contflota);
+                    $idcf = $row_contflota['ID'];
+                    $ordcf = $row_contflota['ORDEN'];
+                    if (($ordcf == 0) || ($ordcf <> $orden)){
+                        $ordcf = $orden;
+                        $ordencont[$i] = $ordcf;
+                        $sql_update = "UPDATE contactos_flotas SET ORDEN = $ordcf WHERE ID = $idcf";
+                        $res_update = mysql_query($sql_update) or die ("Error al actualizar el orden del $rol " . $row_contflota['CONTACTO_ID'] . mysql_error($link));
+                        $norden++;
+                    }
+                    $orden++;
+                }
+                if ($norden == 0){
+                    $res_update = true;
+                }
+                $mensaje = $norden . ' ' . $mensorden;
+            }
+
+        }
+
         if ($res_update){
             $enlace = $enlaceok;
             $mensflash = $mensaje;

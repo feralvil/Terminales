@@ -26,7 +26,10 @@ $errnocontnew = "El nombre del contacto no puede estar vacío";
 $errcontnewrep = "Ya existe un contacto con el mismo nombre";
 $titlimpiar = "Limpiar Contactos";
 $menslimpiar = "Contactos limpiados correctamente";
-$errlimpiar = "Error al limpiar contactos";    
+$errlimpiar = "Error al limpiar contactos";
+$titorden = "Ordenar Contactos";
+$mensorden = "Contactos ordenados correctamente";
+$errorden = "Error al ordenar contactos";
 $h1perm = "Acceso denegado";
 $permno = "No le está permitido modificar los datos de los contactos de esta flota.";
 ?>

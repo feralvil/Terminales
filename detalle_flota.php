@@ -367,12 +367,12 @@ if ($permiso > 0) {
                     ?>
                         <table>
                             <tr>
-                                <th class="t4c"><?php echo $thorg; ?></th>
-                                <th class="t4c"><?php echo $nomflota; ?></th>
+                                <th class="t5c"><?php echo $thorg; ?></th>
+                                <th class="t5c"><?php echo $nomflota; ?></th>
                                 <th class="t10c">DNI</th>
-                                <th class="t4c"><?php echo $cargo; ?></th>
+                                <th class="t5c"><?php echo $cargo; ?></th>
                                 <th class="t5c"><?php echo $mail; ?></th>
-                                <th class="t5c"><?php echo $telefono; ?></th>
+                                <th class="t10c"><?php echo $telefono; ?></th>
                             </tr>
                             <tr>
                                 <td><?php echo $row_org['ORGANIZACION']; ?></td>
