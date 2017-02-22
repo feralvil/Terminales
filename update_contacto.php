@@ -70,6 +70,30 @@ if ($flota_usu == 100) {
             $titulo = $titdel . ": " . $rolestxt[$rol];
             $mensaje = $mensdel . ": " . $rolestxt[$rol];
             $error = $errdel . ": " . $rolestxt[$rol];
+            // Obtenemos el orden
+            if ($rol != 'RESPONSABLE'){
+                $sql_check = "SELECT * FROM contactos_flotas WHERE (ID = $idcf)";
+                $res_check = mysql_query($sql_check) or die ("Error en la consulta de comprobación: " . mysql_error($link));
+                $ncheck = mysql_num_rows($res_check);
+                if ($ncheck > 0){
+                    $row_contflo = mysql_fetch_array($res_check);
+                    $idflota = $row_contflo['FLOTA_ID'];
+                    $rol = $row_contflo['ROL'];
+                    $orden = $row_contflo['ORDEN'];
+                    $sql_contflota = "SELECT * FROM contactos_flotas WHERE (FLOTA_ID = $idflota) AND (ROL = '$rol') AND (ORDEN > $orden)";
+                    $res_contflota = mysql_query($sql_contflota) or die ("Error en la consulta de los contactos de Flota: " . mysql_error($link));
+                    $ncontflota = mysql_num_rows($res_contflota);
+                    if ($ncontflota > 0){
+                        for ($i = 0; $i < $ncontflota; $i++){
+                            $row_contflota = mysql_fetch_array($res_contflota);
+                            $idcontflota = $row_contflota['ID'];
+                            $orden = $row_contflota['ORDEN'] - 1;
+                            $sql_updorden = "UPDATE contactos_flotas SET ORDEN = $orden WHERE ID = $idcontflota";
+                            $res_update = mysql_query($sql_updorden) or die ("Error al modificar el orden de los contactos: " . mysql_error($link));
+                        }
+                    }
+                }
+            }
             $sql_update = "DELETE FROM contactos_flotas WHERE ID = " . $idcf;
             $res_update = mysql_query($sql_update) or die ("Error al borrar contacto: " . mysql_error($link));
         }
@@ -87,8 +111,22 @@ if ($flota_usu == 100) {
                     $error .= ". " . $errcontrep;
                 }
                 else {
-                    $sql_update = "INSERT INTO contactos_flotas (CONTACTO_ID, FLOTA_ID, ROL)";
-                    $sql_update .= " VALUES ($idcont, $idflota, '$rol')";
+                    // Obtenemos el orden
+                    if ($rol == 'RESPONSABLE'){
+                        $orden = 0;
+                    }
+                    else{
+                        $orden = 1;
+                        $sql_orden = "SELECT MAX(ORDEN) AS MAXORDEN FROM contactos_flotas WHERE (FLOTA_ID = $idflota) AND (ROL = '$rol')";
+                        $res_orden = mysql_query($sql_orden) or die ("Error en la consulta del orden de contactos: " . mysql_error($link));
+                        $norden = mysql_num_rows($res_orden);
+                        if ($norden > 0){
+                            $row_orden = mysql_fetch_array($res_orden);
+                            $orden = $row_orden['MAXORDEN'] + 1;
+                        }
+                    }
+                    $sql_update = "INSERT INTO contactos_flotas (CONTACTO_ID, FLOTA_ID, ROL, ORDEN)";
+                    $sql_update .= " VALUES ($idcont, $idflota, '$rol', $orden)";
                     $res_update .= mysql_query($sql_update) or die ("Error al insertar contacto existente: " . mysql_error($link));
                 }
             }
@@ -116,8 +154,22 @@ if ($flota_usu == 100) {
                     $sql_insert .= " VALUES ('$nombre', '$cargo', '$nif', '$mail', '$telefono')";
                     $res_insert = mysql_query($sql_insert) or die ("Error al insertar nuevo contacto: " . mysql_error($link));
                     $idcont = mysql_insert_id($link);
-                    $sql_update = "INSERT INTO contactos_flotas (CONTACTO_ID, FLOTA_ID, ROL)";
-                    $sql_update .= " VALUES ($idcont, $idflota, '$rol')";
+                    // Obtenemos el orden
+                    if ($rol == 'RESPONSABLE'){
+                        $orden = 0;
+                    }
+                    else{
+                        $orden = 1;
+                        $sql_orden = "SELECT MAX(ORDEN) AS MAXORDEN FROM contactos_flotas WHERE (FLOTA_ID = $idflota) AND (ROL = '$rol')";
+                        $res_orden = mysql_query($sql_orden) or die ("Error en la consulta del orden de contactos: " . mysql_error($link));
+                        $norden = mysql_num_rows($res_orden);
+                        if ($norden > 0){
+                            $row_orden = mysql_fetch_array($res_orden);
+                            $orden = $row_orden['MAXORDEN'] + 1;
+                        }
+                    }
+                    $sql_update = "INSERT INTO contactos_flotas (CONTACTO_ID, FLOTA_ID, ROL, ORDEN)";
+                    $sql_update .= " VALUES ($idcont, $idflota, '$rol', $orden)";
                     $res_update = mysql_query($sql_update) or die ("Error al insertar nuevo contacto en la flota: " . mysql_error($link));
                 }
             }

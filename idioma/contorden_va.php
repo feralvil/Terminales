@@ -28,6 +28,7 @@ $errno24h = "No s'han definit Contactes incidències 24 h.";
 $err24h = "No s'han trobat les dades del Contacte d'incidències 24 h.";
 $botvolver = "Tornar a Flotes";
 $botorden = "Ordenar contactes";
+$botdetalle = "Anar a Flota";
 $h1perm = "Accés denegat";
 $permno = "No li està permés modificar les dades dels contactes d'aquesta flota.";
 ?>

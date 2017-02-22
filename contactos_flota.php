@@ -78,7 +78,7 @@ if ($permiso == 2) {
             $organiza = mysql_fetch_array($res_org);
         }
         // Datos de contactos
-        $sql_contactos = "SELECT * FROM contactos_flotas WHERE FLOTA_ID = $idflota";
+        $sql_contactos = "SELECT * FROM contactos_flotas WHERE FLOTA_ID = $idflota ORDER BY ROL ASC, ORDEN ASC";
         $res_contactos = mysql_query($sql_contactos) or die("Error en la consulta de contacto: " . mysql_error());
         $ncontactos = mysql_num_rows($res_contactos);
         if ($ncontactos > 0){
@@ -236,7 +236,7 @@ if ($permiso == 2) {
                         <th class="t5c"><?php echo $thtelef; ?></th>
                         <th class="t10c"><?php echo $thacciones; ?></th>
                     </tr>
-                <?php                
+                <?php
                 foreach ($operativos as $idcf => $idop){
                     $sql_contacto = "SELECT * FROM contactos WHERE ID = $idop";
                     $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de responsable: " . mysql_error());
@@ -275,7 +275,7 @@ if ($permiso == 2) {
             ?>
                 <p class='error'><?php echo $errnoop; ?>
             <?php
-            }            
+            }
             ?>
             <h3>
                 <?php echo $h3tecnico; ?> &mdash;
@@ -296,7 +296,7 @@ if ($permiso == 2) {
                         <th class="t5c"><?php echo $thtelef; ?></th>
                         <th class="t10c"><?php echo $thacciones; ?></th>
                     </tr>
-                <?php                
+                <?php
                 foreach ($tecnicos as $idcf => $idtec){
                     $sql_contacto = "SELECT * FROM contactos WHERE ID = $idtec";
                     $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de responsable: " . mysql_error());
@@ -335,7 +335,7 @@ if ($permiso == 2) {
             ?>
                 <p class='error'><?php echo $errnotec; ?>
             <?php
-            }            
+            }
             ?>
             <h3>
                 <?php echo $h3cont24h; ?> &mdash;
@@ -356,7 +356,7 @@ if ($permiso == 2) {
                         <th class="t5c"><?php echo $thtelef; ?></th>
                         <th class="t10c"><?php echo $thacciones; ?></th>
                     </tr>
-                <?php                
+                <?php
                 foreach ($cont24h as $idcf => $id24){
                     $sql_contacto = "SELECT * FROM contactos WHERE ID = $id24";
                     $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de responsable: " . mysql_error());

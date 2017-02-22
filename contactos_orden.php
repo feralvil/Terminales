@@ -359,8 +359,16 @@ if ($permiso > 0){
                     <td class="borde">
                         <a href='flotas.php'><img src='imagenes/atras.png' alt='<?php echo $botvolver; ?>' title='<?php echo $botvolver; ?>'></a><br><?php echo $botvolver; ?>
                     </td>
+                    <td class="borde">
+                        <a href='#' onclick="document.formdetalle.submit();">
+                            <img src='imagenes/zoom.png' alt='<?php echo $botdetalle; ?>' title='<?php echo $botdetalle; ?>'>
+                        </a><br><?php echo $botdetalle; ?>
+                    </td>
                 </tr>
             </table>
+        </form>
+        <form name="formdetalle" action="detalle_flota.php" method="POST">
+            <input type="hidden" name="idflota" value="<?php echo $idflota;?>">
         </form>
 
     <?php
