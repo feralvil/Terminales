@@ -64,12 +64,12 @@ if ($flota_usu == 100) {
             $res_update = false;
             $mensflash = $error_noflota;
         }
-        else{ 
+        else{
             if (!(empty ($delterm))){
                 $ntermdel = count($delterm);
                 for ($i = 0; $i < $ntermdel; $i++){
                     $sql_delterm = "DELETE FROM terminales WHERE ID = '".$delterm[$i]."'";
-                    $res_update = mysql_query($sql_delterm) or die ($errdelterm." ID -  ".$delterm[$i].": ".mysql_error());                    
+                    $res_update = mysql_query($sql_delterm) or die ($errdelterm." ID -  ".$delterm[$i].": ".mysql_error());
                 }
                 if ($res_update){
                     $fichero = "flotas/$idflota.xls";
@@ -91,7 +91,7 @@ if ($flota_usu == 100) {
                 $update = "OK";
                 $mensflash = $termimp;
             }
-            
+
             // Terminales para AKDC
             $termakdc = array();
             if(!(empty($idupd))){
@@ -108,11 +108,11 @@ if ($flota_usu == 100) {
                         $termissi = mysql_fetch_array($res_termissi);
                         $termakdc[] = $termissi['ID'];
                     }
-                    
+
                 }
             }
         }
-        
+
         if ($update == "KO"){
             $clase = "flashko";
             $imagen = "imagenes/cancelar.png";
@@ -137,7 +137,7 @@ if ($flota_usu == 100) {
             <?php
             foreach ($termakdc as $idakdc){
             ?>
-                <input type="hidden" name="termakdc[]" value="<?php echo $idakdc; ?>">
+                <input type="hidden" name="termsel[]" value="<?php echo $idakdc; ?>">
             <?php
             }
             ?>

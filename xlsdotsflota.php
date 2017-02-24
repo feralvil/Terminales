@@ -156,11 +156,11 @@ if ($nflota > 0){
         $row_mun = mysql_fetch_array($res_mun);
         $municipio = $row_mun["MUNICIPIO"];
     }
-    if (!(empty ($dotsterm))){
+    if (!(empty ($termsel))){
         $vectorid = "(";
-        for ($i = 0; $i < count($dotsterm); $i++){
-            $vectorid = $vectorid . $dotsterm[$i];
-            if ($i < (count($dotsterm) - 1)){
+        for ($i = 0; $i < count($termsel); $i++){
+            $vectorid = $vectorid . $termsel[$i];
+            if ($i < (count($termsel) - 1)){
                 $vectorid = $vectorid.", ";
             }
         }
@@ -184,7 +184,7 @@ if ($nflota > 0){
                     $modelo = $row_modelo[0];
                     // Consulta de Terminales de la marca y el modelo
                     $sql_terminal = "SELECT * FROM terminales WHERE FLOTA='$idflota' AND MARCA='$marca' AND MODELO='$modelo' ";
-                    if (!(empty ($dotsterm))){
+                    if (!(empty ($termsel))){
                         $sql_terminal = $sql_terminal."AND terminales.ID IN $vectorid ";
                     }
                     $sql_terminal = $sql_terminal."ORDER BY ISSI ASC";

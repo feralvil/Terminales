@@ -56,15 +56,15 @@ if($permiso==2) {
         if ($tei != '') {
             $sql_term .= " AND (TEI = '".$tei."')";
         }
-        if (!(empty ($termakdc))){
+        if (!(empty ($termsel))){
             $sql_term .= " AND terminales.ID IN (";
-            for ($i = 0; $i < count($termakdc); $i++){
-                $sql_term .= $termakdc[$i];
-                if ($i < (count($termakdc) - 1)){
+            for ($i = 0; $i < count($termsel); $i++){
+                $sql_term .= $termsel[$i];
+                if ($i < (count($termsel) - 1)){
                     $sql_term .= ", ";
                 }
             }
-            $sql_term .= ")";        
+            $sql_term .= ")";
         }
         $sql_term .= " ORDER BY ISSI ASC";
         $res_term = mysql_query($sql_term) or die ("Error en la consulta de Terminales".mysql_error());
@@ -90,9 +90,9 @@ if($permiso==2) {
             $row_terminal=mysql_fetch_array($res_term);
             $tei = $row_terminal["TEI"];
             $issi = $row_terminal["ISSI"];
-            $itsi = "0x35800A".sprintf('%06X', $issi);            
+            $itsi = "0x35800A".sprintf('%06X', $issi);
             $marca = strtoupper(substr($row_terminal["MARCA"],0,1));
-            $numerok = $row_terminal["NUMEROK"];            
+            $numerok = $row_terminal["NUMEROK"];
             $par = $marca."0x$tei,$itsi";
             if ($parametro == "numk"){
                 $par = $marca."0x$tei,$numerok";

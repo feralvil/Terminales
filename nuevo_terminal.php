@@ -45,16 +45,16 @@ if ($idflota != "") {
     $row_flota = mysql_fetch_array($res_flota);
     $id_flota = $row_flota["ID"];
     $txt_flota = " de la Flota ".$row_flota["FLOTA"]." (".$row_flota["ACRONIMO"].")";
-    $sql_marca = "SELECT DISTINCT MARCA FROM terminales ORDER BY MARCA ASC";
-    $res_marca = mysql_query($sql_marca, $link) or die(mysql_error());
-    $nmarca = mysql_num_rows($res_marca);
-    $sql_modelo = "SELECT DISTINCT MODELO FROM terminales ORDER BY MODELO ASC";
-    $res_modelo = mysql_query($sql_modelo, $link) or die(mysql_error());
-    $nmodelo = mysql_num_rows($res_modelo);
-    $sql_prov = "SELECT DISTINCT PROVEEDOR FROM terminales ORDER BY PROVEEDOR ASC";
-    $res_prov = mysql_query($sql_prov, $link) or die(mysql_error());
-    $nprov = mysql_num_rows($res_prov);
 }
+$sql_marca = "SELECT DISTINCT MARCA FROM terminales ORDER BY MARCA ASC";
+$res_marca = mysql_query($sql_marca, $link) or die(mysql_error());
+$nmarca = mysql_num_rows($res_marca);
+$sql_modelo = "SELECT DISTINCT MODELO FROM terminales ORDER BY MODELO ASC";
+$res_modelo = mysql_query($sql_modelo, $link) or die(mysql_error());
+$nmodelo = mysql_num_rows($res_modelo);
+$sql_prov = "SELECT DISTINCT PROVEEDOR FROM terminales ORDER BY PROVEEDOR ASC";
+$res_prov = mysql_query($sql_prov, $link) or die(mysql_error());
+$nprov = mysql_num_rows($res_prov);
 ?>
 <html>
     <head>

@@ -186,7 +186,7 @@ if ($permiso != 0) {
 ?>
                                 <tr <?php if (($k % 2)== 1) {echo "class='filapar'";}?>>
                                     <td class='centro'>
-                                        <input type="checkbox" name="dotsterm[]" value="<?php echo $idterm;?>" />
+                                        <input type="checkbox" name="termsel[]" value="<?php echo $idterm;?>" />
                                     </td>
                                     <td class="centro">
                                         <a href='#' onclick="<?php echo $linkterm;?>"><img src='imagenes/consulta.png' alt="Consulta" title="Consulta"></a>

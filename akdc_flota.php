@@ -210,7 +210,7 @@ if ($permiso != 0) {
                     <td><?php echo $row_term["NUMEROK"]; ?></td>
                     <td><?php echo $row_term["MNEMONICO"]; ?></td>
                     <td class="centro">
-                        <input type="checkbox" name="termakdc[]" value="<?php echo $idterm; ?>" />
+                        <input type="checkbox" name="termsel[]" value="<?php echo $idterm; ?>" />
                     </td>
                 </tr>
 <?php

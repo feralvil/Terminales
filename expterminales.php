@@ -480,7 +480,7 @@ $objPHPExcel->getActiveSheet()->setCellValue("I$fila", $thrango);
 $objPHPExcel->getActiveSheet()->getStyle('I' . $fila)->applyFromArray($estiloTh);
 $objPHPExcel->getActiveSheet()->mergeCells('I' . $fila . ':J' . $fila);
 if ($row_flota['RANGO'] == ""){
-    $objPHPExcel->getActiveSheet()->getStyle("K$fila")->applyFromArray($estilerr);
+    $objPHPExcel->getActiveSheet()->getStyle("K$fila")->applyFromArray($estiloError);
 }
 else{
     $objPHPExcel->getActiveSheet()->setCellValue("K$fila", $row_flota["RANGO"]);
