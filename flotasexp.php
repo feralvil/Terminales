@@ -46,6 +46,13 @@ require_once 'Classes/PHPExcel.php';
 $sql = "SELECT flotas.ID, organizaciones.ORGANIZACION, flotas.FLOTA, ";
 $sql .= "flotas.ACRONIMO, flotas.ENCRIPTACION FROM flotas, organizaciones";
 $sql .= " WHERE (flotas.ORGANIZACION = organizaciones.ID)";
+if (($organiza!='')&&($organiza!="00")) {
+    $sql.=" AND (flotas.ORGANIZACION = '$organiza')";
+    $sql_organiza = "SELECT * FROM organizaciones WHERE ID='$organiza'";
+    $res_organiza = mysql_db_query($base_datos, $sql_organiza) or die(mysql_error());
+    $row_organiza = mysql_fetch_array($res_organiza);
+    $organiza_txt = $row_organiza["ORGANIZACION"];
+}
 if (($flota!='')&&($flota!="00")) {
     $sql.=" AND (flotas.ID='$flota')";
     $sql_flota = "SELECT * FROM flotas WHERE ID='$flota'";
@@ -53,16 +60,11 @@ if (($flota!='')&&($flota!="00")) {
     $row_flota=mysql_fetch_array($res_flota);
     $flota_txt = $row_flota["FLOTA"];
 }
-if (($activa!='')&&($activa!="00")) {
-    $sql.=" AND (flotas.ACTIVO='$activa')";
-    if ($activa=="SI"){
-        $activa = "Sí";
-    }
-    else{
-        $activa = "No";
-    }
+if (($formcont != '') && ($formcont != "00")) {
+    $sql .= " AND (flotas.FORMCONT = '$formcont')";
 }
-$sql_flotas = $sql." ORDER BY organizaciones.ORGANIZACION ASC, flotas.FLOTA ASC";
+
+$sql_flotas = $sql . " ORDER BY organizaciones.ORGANIZACION ASC, flotas.FLOTA ASC";
 $res_flotas = mysql_query($sql_flotas) or die(mysql_error());
 $nflotas = mysql_num_rows($res_flotas);
 $fila = 2;
@@ -179,25 +181,33 @@ $objPHPExcel->getActiveSheet()->mergeCells('A1:J1');
 
 
 $fila = 3;
-if ((($flota!='')&&($flota!="00"))||(($activa!='')&&($activa!="00"))) {
+if ((($flota!='')&&($flota!="00"))||(($organiza!='')&&($organiza!="00"))||(($formcont!='')&&($formcont!="00"))) {
     $objPHPExcel->getActiveSheet()->setCellValue('A3',$criterios);
     $objPHPExcel->getActiveSheet()->getStyleByColumnAndRow(0,$fila)->applyFromArray($estiloCriterio);
     $objPHPExcel->getActiveSheet()->mergeCells('A3:C3');
     $fila++;
+    $colcrit = array('A', 'D', 'H');
+    $indexcol = 0;
+    if (($organiza!='')&&($organiza!="00")) {
+        $objPHPExcel->getActiveSheet()->setCellValue($colcrit[$indexcol] . $fila, '- ' . $thorg . ': ' . $organiza_txt);
+        $objPHPExcel->getActiveSheet()->getStyle($colcrit[$indexcol] . $fila)->applyFromArray($estiloCriterio);
+        $indexcol++;
+    }
     if (($flota!='')&&($flota!="00")) {
-        $objPHPExcel->getActiveSheet()->setCellValue("B$fila","- Flota: ");
+        $objPHPExcel->getActiveSheet()->setCellValue($colcrit[$indexcol] . $fila, '- Flota: ' . $flota_txt);
+        $objPHPExcel->getActiveSheet()->getStyle($colcrit[$indexcol] . $fila)->applyFromArray($estiloCriterio);
+        $indexcol++;
+        /*$objPHPExcel->getActiveSheet()->setCellValue("A$fila","- Flota: ");
         $objPHPExcel->getActiveSheet()->getStyle("B$fila")->applyFromArray($estiloCriterio);
         $objPHPExcel->getActiveSheet()->setCellValue("B$fila",$flota_txt);
-        $objPHPExcel->getActiveSheet()->mergeCells("C$fila:F$fila");
-        $fila++;
+        $objPHPExcel->getActiveSheet()->mergeCells("C$fila:F$fila");*/
     }
-    if (($flota!='')&&($flota!="00")) {
-        $objPHPExcel->getActiveSheet()->setCellValue("B$fila","- Activa: ");
-        $objPHPExcel->getActiveSheet()->getStyle("B$fila")->applyFromArray($estiloCriterio);
-        $objPHPExcel->getActiveSheet()->setCellValue("B$fila", $activa);
-        $objPHPExcel->getActiveSheet()->mergeCells("C$fila:F$fila");
-        $fila++;
+    if (($formcont!='')&&($formcont!="00")) {
+        $objPHPExcel->getActiveSheet()->setCellValue($colcrit[$indexcol] . $fila, '- ' . $txtcontof . ': ' . $formcont);
+        $objPHPExcel->getActiveSheet()->getStyle($colcrit[$indexcol] . $fila)->applyFromArray($estiloCriterio);
+        $indexcol++;
     }
+    $fila++;
 }
 $fila++;
 

@@ -225,7 +225,8 @@ if ($flota_usu == 100) {
         </form>
         <form name="flotasexp" action="flotasexp.php" method="POST" target="_blank">
             <input type="hidden" name="flota" value="<?php echo $flota; ?>">
-            <input type="hidden" name="activa" value="<?php echo $activa; ?>">
+            <input type="hidden" name="organiza" value="<?php echo $organiza; ?>">
+            <input type="hidden" name="formcont" value="<?php echo $formcont; ?>">
             <input type="hidden" name="formato" value="#">
         </form>
         <table>
