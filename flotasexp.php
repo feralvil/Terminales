@@ -43,8 +43,8 @@ date_default_timezone_set('Europe/Madrid');
 require_once 'Classes/PHPExcel.php';
 
 // Consulta a la base de datos
-$sql = "SELECT flotas.ID, organizaciones.ORGANIZACION, flotas.FLOTA, ";
-$sql .= "flotas.ACRONIMO, flotas.ENCRIPTACION FROM flotas, organizaciones";
+$sql = "SELECT flotas.ID, organizaciones.ORGANIZACION, flotas.FLOTA, flotas.ACRONIMO, ";
+$sql .= "flotas.UPDCONT, flotas.ENCRIPTACION FROM flotas, organizaciones";
 $sql .= " WHERE (flotas.ORGANIZACION = organizaciones.ID)";
 if (($organiza!='')&&($organiza!="00")) {
     $sql.=" AND (flotas.ORGANIZACION = '$organiza')";
@@ -95,11 +95,11 @@ $objPHPExcel->getDefaultStyle()->getFont()->setSize($tamfont);
 $objPHPExcel->setActiveSheetIndex(0);
 
 $cabecera = $campospdf;
-$anchos = array(5, 40, 40, 15, 15, 20, 15, 15 , 15, 15);
+$anchos = array(5, 40, 40, 15, 10, 15, 20, 15, 15 , 15, 15);
 if ($formato == "pdf"){
     $anchos = array(5, 30, 30, 20, 15, 20, 15, 15 , 15, 15);
 }
-$nomcolumna = array("A","B","C","D","E","F","G","H","I", "J");
+$nomcolumna = array("A","B","C","D","E","F","G","H","I", "J", "K");
 
 // Estilos para la hoja:
 $estiloTitulo = array(
@@ -177,7 +177,7 @@ for ($i = 0; $i < count($anchos); $i++){
 // Primera hoja: Título de la tabla de datos
 $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($estiloTitulo);
 $objPHPExcel->getActiveSheet()->setCellValue('A1', $h1);
-$objPHPExcel->getActiveSheet()->mergeCells('A1:J1');
+$objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
 
 
 $fila = 3;
@@ -197,10 +197,6 @@ if ((($flota!='')&&($flota!="00"))||(($organiza!='')&&($organiza!="00"))||(($for
         $objPHPExcel->getActiveSheet()->setCellValue($colcrit[$indexcol] . $fila, '- Flota: ' . $flota_txt);
         $objPHPExcel->getActiveSheet()->getStyle($colcrit[$indexcol] . $fila)->applyFromArray($estiloCriterio);
         $indexcol++;
-        /*$objPHPExcel->getActiveSheet()->setCellValue("A$fila","- Flota: ");
-        $objPHPExcel->getActiveSheet()->getStyle("B$fila")->applyFromArray($estiloCriterio);
-        $objPHPExcel->getActiveSheet()->setCellValue("B$fila",$flota_txt);
-        $objPHPExcel->getActiveSheet()->mergeCells("C$fila:F$fila");*/
     }
     if (($formcont!='')&&($formcont!="00")) {
         $objPHPExcel->getActiveSheet()->setCellValue($colcrit[$indexcol] . $fila, '- ' . $txtcontof . ': ' . $formcont);
@@ -226,7 +222,7 @@ $objPHPExcel->getActiveSheet()->freezePaneByColumnAndRow(0, $fila_inicio+1);
 
 // Bordes de la tabla de datos
 $fila_fin = $fila_inicio + $nflotas;
-$rango = "A$fila_inicio:J$fila_fin";
+$rango = "A$fila_inicio:K$fila_fin";
 $objPHPExcel->getActiveSheet()->getStyle($rango)->applyFromArray($estiloCelda);
 
 // Cabecera de la tabla
@@ -234,25 +230,28 @@ for($i = 0; $i < count($cabecera); $i++) {
     $celda = $nomcolumna[$i].$fila;
     $objPHPExcel->getActiveSheet()->setCellValue($celda,$cabecera[$i]);
 }
-$objPHPExcel->getActiveSheet()->getStyle("A$fila:J$fila")->applyFromArray($estiloTh);
+$objPHPExcel->getActiveSheet()->getStyle("A$fila:K$fila")->applyFromArray($estiloTh);
 $fila++;
 $tterm = array (0,0,0,0,0);
 
 // Imprimir las flotas
 for ($j = 0; $j < $nflotas; $j++){
     $row_flota = mysql_fetch_array($res_flotas);
+    if ($row_flota[4] == '0000-00-00'){
+        $row_flota[4] = 'NO';
+    }
     $tipos = array("F", "M%", "P%", "D");
     $nterm = array (0,0,0,0);
     $sql_term = "SELECT * FROM terminales WHERE FLOTA='$row_flota[0]'";
     $res_term = mysql_query($sql_term) or die ("Error en la consulta de Terminales".mysql_error());
     $tot_term = mysql_num_rows($res_term);
-    $row_flota[5] = number_format($tot_term,0,',','.');
+    $row_flota[6] = number_format($tot_term,0,',','.');
     $tterm[0] += $tot_term;
     for($i=0; $i< count($tipos);$i++){
         $sql_term = "SELECT * FROM terminales WHERE FLOTA='$row_flota[0]' AND TIPO LIKE '".$tipos[$i]."'";
         $res_term = mysql_db_query($base_datos,$sql_term) or die ("Error en la consulta de ".$cabecera[$j].": ".mysql_error());
         $nterm[$i] = mysql_num_rows($res_term);
-        $row_flota[6 + $i] = number_format($nterm[$i],0,'.',',');
+        $row_flota[7 + $i] = number_format($nterm[$i],0,'.',',');
         $tterm[$i+1] += $nterm[$i];
     }
     for ($i = 0; $i < count($cabecera); $i++){
@@ -260,7 +259,7 @@ for ($j = 0; $j < $nflotas; $j++){
         $objPHPExcel->getActiveSheet()->setCellValue($celda, $row_flota[$i]);
     }
     if (($j % 2) == 1){
-        $rango = "A$fila:J$fila";
+        $rango = "A$fila:K$fila";
         $objPHPExcel->getActiveSheet()->getStyle($rango)->applyFromArray($estiloRelleno);
     }
     $fila++;
@@ -270,13 +269,12 @@ $fila++;
 // Fila de recuento de terminales
 $objPHPExcel->getActiveSheet()->setCellValue("A$fila",$totales);
 $objPHPExcel->getActiveSheet()->getStyle("A$fila")->applyFromArray($estiloTh);
-$objPHPExcel->getActiveSheet()->mergeCells("A$fila:E$fila");
+$objPHPExcel->getActiveSheet()->mergeCells("A$fila:F$fila");
 for ($i = 0; $i < count($tterm); $i++){
-    //$tterm[$i] = number_format($tterm[$i],0,',','.');
-    $celda = $nomcolumna[$i + 5].$fila;
+    $celda = $nomcolumna[$i + 6].$fila;
     $objPHPExcel->getActiveSheet()->setCellValue($celda, $tterm[$i]);
 }
-$objPHPExcel->getActiveSheet()->getStyle("A$fila:J$fila")->applyFromArray($estiloCelda);
+$objPHPExcel->getActiveSheet()->getStyle("A$fila:K$fila")->applyFromArray($estiloCelda);
 
 // Fijamos la primera hoja como la activa, al abrir Excel
 $objPHPExcel->setActiveSheetIndex(0);// Fijamos como hoja activa la primera y fijamos el título:

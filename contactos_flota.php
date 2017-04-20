@@ -110,7 +110,24 @@ if ($permiso == 2) {
         }
     }
     if ($nflota > 0) {
+        if (isset ($update)){
+            if ($update == "KO"){
+                $clase = "flashko";
+                $imagen = "imagenes/cancelar.png";
+                $alt = "Error";
+            }
+            if ($update == "OK"){
+                $clase = "flashok";
+                $imagen = "imagenes/okm.png";
+                $alt = "OK";
+            }
 ?>
+            <p class="<?php echo $clase;?>">
+                <img src="<?php echo $imagen;?>" alt="<?php echo $alt;?>" title="<?php echo $alt;?>"> &mdash; <?php echo $mensflash;?>
+            </p>
+    <?php
+        }
+    ?>
         <h1>Flota <?php echo $row_flota["FLOTA"]; ?> (<?php echo $row_flota["ACRONIMO"]; ?>)</h1>
         <table>
             <tr>

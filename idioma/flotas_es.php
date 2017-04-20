@@ -21,7 +21,7 @@ $noreg = "No hay registros";
 $campos = array("Detalle","Flota","Acrónimo","Encriptación","Organización", "Nº Terminales");
 $h1perm = "Acceso denegado";
 $permno = "No le está permitido el acceso a los datos de las flotas.";
-$campospdf = array("ID","Organización","Flota","Acrónimo","Encriptación", "Total Terminales","T. Base","T. Móviles", "T. Portátiles", "Despachos");
+$campospdf = array("ID","Organización","Flota","Acrónimo", "Contactos", "Encriptación", "Total Terminales","T. Base","T. Móviles", "T. Portátiles", "Despachos");
 $totales = "Totales";
 $nom_fichero = "Flotas_COMDES";
 ?>

@@ -56,7 +56,7 @@ if ($flota_usu == 100) {
     <body>
 <?php
     if ($permiso == 2) {
-        $enlacefail = $enlaceok = 'detalle_flota.php';
+        $enlacefail = $enlaceok = 'contactos_flota.php';
         $res_update = false;
         if ($origen == "editar"){
             $titulo = $titedi . ": " . $rolestxt[$rol];

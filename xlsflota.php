@@ -330,7 +330,7 @@ if ($nflota > 0){
     $objPHPExcel->getActiveSheet()->setCellValue('L25', $thtelef);
     $objPHPExcel->getActiveSheet()->mergeCells('L25:M25');
     $objPHPExcel->getActiveSheet()->getStyle('A25:M25')->applyFromArray($estiloTh);
-    $sql_contop = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'OPERATIVO')";
+    $sql_contop = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'OPERATIVO') ORDER BY ORDEN";
     $res_contop = mysql_query($sql_contop) or die(mysql_error());
     $ncontop = mysql_num_rows($res_contop);
     $fila = $fila_op = 25;
@@ -376,7 +376,7 @@ if ($nflota > 0){
     $objPHPExcel->getActiveSheet()->setCellValue('L' . $fila_tec, $thtelef);
     $objPHPExcel->getActiveSheet()->mergeCells('L' . $fila_tec . ':M' . $fila_tec);
     $objPHPExcel->getActiveSheet()->getStyle('A' . $fila_tec . ':M' . $fila_tec)->applyFromArray($estiloTh);
-    $sql_conttec = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'TECNICO')";
+    $sql_conttec = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'TECNICO') ORDER BY ORDEN";
     $res_conttec = mysql_query($sql_conttec) or die(mysql_error());
     $nconttec = mysql_num_rows($res_conttec);
     $fila = $fila_tec;
@@ -419,7 +419,7 @@ if ($nflota > 0){
     $objPHPExcel->getActiveSheet()->mergeCells('K' . $fila_24h . ':M' . $fila_24h);
     $objPHPExcel->getActiveSheet()->getStyle('A' . $fila_24h . ':M' . $fila_24h)->applyFromArray($estiloTh);
     $fila = $fila_24h;
-    $sql_cont24h = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'CONT24H')";
+    $sql_cont24h = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'CONT24H') ORDER BY ORDEN";
     $res_cont24h = mysql_query($sql_cont24h) or die(mysql_error());
     $ncont24h = mysql_num_rows($res_cont24h);
     for ($i = 0 ; $i < $ncont24h; $i++){
