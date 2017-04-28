@@ -18,7 +18,7 @@ else{
 // ------------ Conexión a BBDD de Terminales ----------------------------------------- //
 
 // Importamos las variables de formulario:
-import_request_variables("gp", "");
+import_request_variables("p", "");
 
 /*
  *  $permiso = variable de permisos de flota:
