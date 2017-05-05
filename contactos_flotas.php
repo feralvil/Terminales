@@ -68,7 +68,10 @@ if ($flota_usu == 100) {
         $res_selflotas = mysql_query($sql_selflotas) or die(mysql_error());
         $nselflotas = mysql_num_rows($res_selflotas);
     ?>
-        <h1><?php echo $h1; ?></h1>
+        <h1>
+            <?php echo $h1; ?> &mdash; <a href="contactos_flotas.php" target="_blank"><img src="imagenes/newtab.png" alt="<?php echo $newtab;?>" title="<?php echo $newtab;?>"></a>
+        </h1>
+
         <form action="contactos_flotas.php" name="formulario" method="POST">
             <h4>
                 <?php echo $criterios; ?> &mdash;

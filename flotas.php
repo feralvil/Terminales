@@ -202,7 +202,8 @@ if ($flota_usu == 100) {
                     }
 ?>
                     <td class="borde">
-                        <a href="nueva_flota.php"><img src="imagenes/nueva.png" alt="<?php echo $newflota; ?>"></a> &mdash; <?php echo $newflota; ?>
+                        <a href="nueva_flota.php"><img src="imagenes/nueva.png" alt="<?php echo $newflota; ?>" title="<?php echo $newflota; ?>"></a> &mdash;
+                        <a href="contactos_flotas.php"><img src="imagenes/contactosxls.png" alt="<?php echo $contflota; ?>" title="<?php echo $contflota; ?>"></a>
                     </td>
 <?php
                     if ($nfilas > 0) {

@@ -17,6 +17,7 @@ $nreg = "Nº total de registros";
 $regpg = "registros por página";
 $pgtxt = "Página";
 $newflota = "Nueva Flota";
+$contflota = "Contactos de Flotas";
 $noreg = "No hay registros";
 $campos = array("Detalle","Flota","Acrónimo","Encriptación","Organización", "Nº Terminales");
 $h1perm = "Acceso denegado";
