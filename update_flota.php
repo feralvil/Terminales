@@ -261,6 +261,58 @@ if ($permiso > 0) {
         }
     }
 
+    if ($origen == "resetpassw") {
+        $titulo = $titresetpw;
+        $error = $errresetpw . ":";
+        $enlacefail = "password_flotas.php";
+        $enlaceok = "password_flotas.php";
+        $sql_flotas = "SELECT ID FROM flotas WHERE (ID <> 100)";
+        if (($idflota != '') && ($idflota != "00")) {
+            $sql_flotas = $sql_flotas . " AND (flotas.ID = $idflota)";
+        }
+        if (($idorg != '') && ($idorg != "00")) {
+            $sql_flotas = $sql_flotas . " AND (flotas.ORGANIZACION = $idorg)";
+        }
+        if (!(empty ($flotasel))){
+            $sql_flotas .= " AND flotas.ID IN (";
+            for ($i = 0; $i < count($flotasel); $i++){
+                $sql_flotas .= $flotasel[$i];
+                if ($i < (count($flotasel) - 1)){
+                    $sql_flotas .= ", ";
+                }
+            }
+            $sql_flotas .= ")";
+        }
+        $flotas = mysql_query($sql_flotas) or die("Error en la consulta de Flotas" . mysql_error());
+        $nflotas = mysql_num_rows($flotas);
+        $sql_total = "";
+        $nupdate = 0;
+        $fecha = date('Y-m-d');
+        if ($nflotas > 0){
+            $res_update = true;
+            $txtupdate = "";
+            $caracteres = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $longCaracteres = strlen($caracteres) - 1;
+            for ($i = 0; $i < $nflotas; $i++){
+                $flota = mysql_fetch_array($flotas);
+                $newpass = '';
+                for ($j = 0; $j < 8; $j++) {
+                    $newpass .= $caracteres[rand(0, $longCaracteres)];
+                }
+                $sql_update = 'UPDATE flotas SET PASSWORD = "' . $newpass . '", PASSRESET = "PDTE", PASSUPDATE = "' . $fecha . '" WHERE (ID = ' . $flota['ID'] . ')';
+                if ($res_update){
+                    $res_update = mysql_query($sql_update) or die("Error al actualizar la flota" . " " . $flota['FLOTA'] . ": " . $sql_update . " - " . mysql_error());
+                    $nupdate++;
+                }
+                $txtupdate .= $sql_update . "<br />";
+            }
+            $mensaje = sprintf($mensresetpw, $nupdate);
+        }
+        else{
+            $error .= $errnoflotas;
+        }
+    }
+
     if ($res_update){
         $enlace = $enlaceok;
         $mensflash = $mensaje;

@@ -42,7 +42,7 @@ if ($flota_usu == 100) {
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <?php
         // Si la sesión de Joomla ha caducado, recargamos la página principal
-        if ($flota_usu = 0){
+        if ($flota_usu == 0){
 ?>
             <script type="text/javascript">
                 window.top.location.href = "https://intranet.comdes.gva.es/cvcomdes/";
@@ -203,7 +203,8 @@ if ($flota_usu == 100) {
 ?>
                     <td class="borde">
                         <a href="nueva_flota.php"><img src="imagenes/nueva.png" alt="<?php echo $newflota; ?>" title="<?php echo $newflota; ?>"></a> &mdash;
-                        <a href="contactos_flotas.php"><img src="imagenes/contactosxls.png" alt="<?php echo $contflota; ?>" title="<?php echo $contflota; ?>"></a>
+                        <a href="contactos_flotas.php"><img src="imagenes/contactosxls.png" alt="<?php echo $contflota; ?>" title="<?php echo $contflota; ?>"></a> &mdash;
+                        <a href="password_flotas.php"><img src="imagenes/llave.png" alt="<?php echo $passflotas; ?>" title="<?php echo $passflotas; ?>"></a>
                     </td>
 <?php
                     if ($nfilas > 0) {

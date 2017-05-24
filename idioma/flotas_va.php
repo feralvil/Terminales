@@ -18,6 +18,7 @@ $regpg = "registres per pàgina";
 $pgtxt = "Pàgina";
 $newflota = "Nova Flota";
 $contflota = "Contactes de Flotes";
+$passflotas = "Contrasenyes de Flotes";
 $noreg = "No hi ha registres";
 $campos = array("Detall","Flota","Acrònim","Encriptació", "Organització", "Nº Terminals");
 $h1perm = "Accés denegat";

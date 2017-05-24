@@ -64,4 +64,6 @@ $perms = "Semidúplex";
 $permd = "Dúplex";
 $permsd = "Semidúplex y Dúplex";
 $nomarch = "Terminales_Comdes";
+$h1passw = "Error: contraseña caducada";
+$errpassw = "Su contraseña ha caducado y debe actualizarla con los datos que le ha facilitado la Oficina COMDES";
 ?>

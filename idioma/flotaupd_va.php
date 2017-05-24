@@ -61,6 +61,9 @@ $titnom = "Normalitzar nom de flotes";
 $mensnom = "%d flotes modificades correctament";
 $errnom = "Error al normalitzar els noms de flotes";
 $errnoflotas = "No s'han trobat flotes amb els criteris de búsqueda seleccionats";
+$titresetpw = "Reiniciar contrasenya de les flotes";
+$errresetpw = "Error al reiniciar las contrasenyes de les flotes";
+$mensresetpw = "Contrasenya de %d flotes reiniciades correctament";
 $h1perm = "Accés denegat";
 $permno = "No li està permés modificar les dades d'esta flota.";
 ?>
