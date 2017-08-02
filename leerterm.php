@@ -272,6 +272,7 @@ if ($flota_usu == 100) {
                         <td><?php echo $objPHPExcel->getActiveSheet()->getCell("O" . $fila)->getValue(); ?></td>
                         <td><?php echo $objPHPExcel->getActiveSheet()->getCell("G" . $fila)->getValue(); ?></td>
                         <td><?php echo $objPHPExcel->getActiveSheet()->getCell("P" . $fila)->getValue(); ?></td>
+                        <td><?php echo $objPHPExcel->getActiveSheet()->getCell("Q" . $fila)->getValue(); ?></td>
                         <td><?php echo $objPHPExcel->getActiveSheet()->getCell("K" . $fila)->getValue(); ?></td>
                         <td><?php echo $dup; ?></td>
                         <td><?php echo $sem; ?></td>
