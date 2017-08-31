@@ -91,7 +91,7 @@ if ($permiso > 0) {
                 $rango = $rangoini . "-" . $rangofin;
             }
             $sql_update = "UPDATE flotas SET FLOTA='$flota', ACRONIMO='$acronimo', LOGIN='$login', ";
-            $sql_update .= "DOMICILIO='$domicilio', ORGANIZACION=$organiza, CP='$cp', INE='$ine', " ;
+            $sql_update .= "DOMICILIO='$domicilio', ORGANIZACION=$organiza, CP='$cp', INE='$ine', AMBITO='$ambito', " ;
             $sql_update .= "ENCRIPTACION='$encriptacion', ACTIVO='$activa', RANGO = '$rango' WHERE ID=$idflota";
             $mensaje = $mensedi;
             $error = $erredi;
@@ -189,9 +189,9 @@ if ($permiso > 0) {
                             $rango = $rangoini . "-" . $rangofin;
                         }
                         $sql_update = "INSERT INTO flotas (FLOTA, ACRONIMO, INE, DOMICILIO, CP, LOGIN, ORGANIZACION, ";
-                        $sql_update .= "PASSWORD, MAIL, ACTIVO, ENCRIPTACION, RANGO) VALUES ";
+                        $sql_update .= "PASSWORD, MAIL, ACTIVO,  AMBITO, ENCRIPTACION, RANGO) VALUES ";
                         $sql_update .= "('$flota', '$acronimo', '$ine', '$domicilio', '$cp', '$usuario', '$organiza', ";
-                        $sql_update .= "'$password', '$mail', '$activa', '$encriptacion', '$rango')";
+                        $sql_update .= "'$password', '$mail', '$activa', '$ambito', '$encriptacion', '$rango')";
                         $mensaje = "Flota $flota_txt $mensnew.";
                         $res_update = mysql_query($sql_update) or die (mysql_error($link));
                         $idflota = mysql_insert_id();

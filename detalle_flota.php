@@ -189,6 +189,9 @@ if ($permiso > 0) {
             $sql_flotas = "SELECT * FROM flotas ORDER BY FLOTA ASC";
             $res_flotas = mysql_query($sql_flotas) or die("Error en la consulta de Flota: " . mysql_error());
             $nflotas = mysql_num_rows($res_flotas);
+            $ambitos = array(
+                'NADA' => $txtambnada, 'LOC' => $txtambloc, 'PROV' => $txtambprov, 'AUT' => $txtambaut
+            );
         ?>
             <h2>Seleccionar Flota</h2>
             <form name="selflota" action="detalle_flota.php" method="post">
@@ -226,14 +229,14 @@ if ($permiso > 0) {
                         <th class="t40p"><?php echo $nomflota; ?></th>
                         <th class="t5c"><?php echo $acroflota; ?></th>
                         <th class="t5c"><?php echo $usuflota; ?></th>
-                        <th class="t10c"><?php echo $activa; ?></th>
+                        <th class="t10c"><?php echo $txtambito; ?></th>
                         <th class="t10c"><?php echo $encripta; ?></th>
                     </tr>
                     <tr>
                         <td><?php echo $row_flota["FLOTA"]; ?></td>
                         <td><?php echo $row_flota["ACRONIMO"]; ?></td>
                         <td><?php echo $row_flota["LOGIN"]; ?></td>
-                        <td><?php echo $row_flota["ACTIVO"]; ?></td>
+                        <td><?php echo $ambitos[$row_flota["AMBITO"]]; ?></td>
                         <td><?php echo $row_flota["ENCRIPTACION"]; ?></td>
                     </tr>
                 </table>

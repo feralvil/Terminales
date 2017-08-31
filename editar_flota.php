@@ -94,7 +94,7 @@ if ($permiso == 2) {
                     <th class="t40p"><?php echo $nomflota; ?></th>
                     <th class="t5c"><?php echo $acroflota; ?></th>
                     <th class="t5c"><?php echo $usuflota; ?></th>
-                    <th class="t10c"><?php echo $activa; ?></th>
+                    <th class="t10c"><?php echo $txtambito; ?></th>
                     <th class="t10c"><?php echo $encripta; ?></th>
                 </tr>
                 <tr>
@@ -102,9 +102,19 @@ if ($permiso == 2) {
                     <td><input type="text" name="acronimo" value="<?php echo $row_flota["ACRONIMO"]; ?>" size="10"></td>
                     <td><input type="text" name="login" value="<?php echo $row_flota["LOGIN"]; ?>" size="10"></td>
                     <td>
-                        <select name="activa">
-                            <option value="SI" <?php if ($row_flota["ACTIVO"] == "SI") {echo 'selected';} ?>>SI</option>
-                            <option value="NO" <?php if ($row_flota["ACTIVO"] == "NO") {echo 'selected';} ?>>NO</option>
+                        <select name="ambito" id="selambito">
+                            <?php
+                            $ambitos = array(
+                                'NADA' => $txtambnada, 'LOC' => $txtambloc, 'PROV' => $txtambprov, 'AUT' => $txtambaut
+                            );
+                            foreach ($ambitos as $idamb => $txtamb) {
+                            ?>
+                                <option value="<?php echo $idamb;?>" <?php if ($row_flota['AMBITO'] == $idamb) {echo "selected";} ?>>
+                                    <?php echo $txtamb;?>
+                                </option>
+                            <?php
+                            }
+                            ?>
                         </select>
                     </td>
                     <td>
@@ -172,7 +182,7 @@ if ($permiso == 2) {
                 </select>
                 <h2><?php echo $h2term; ?></h2>
                 <h3><?php echo $h3rango; ?></h3>
-                    <p>                        
+                    <p>
                         <input type="text" name="rangoini" value="<?php echo $rango[0]; ?>" size="10"> &mdash;
                         <input type="text" name="rangofin" value="<?php echo $rango[1]; ?>" size="10">
                     </p>

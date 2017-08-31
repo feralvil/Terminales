@@ -1,6 +1,6 @@
 <?php
-/* 
- * Textos en castellano para terminales.php 
+/*
+ * Textos en castellano para terminales.php
  */
 
 $titulo = "Editar Flota de la Red COMDES";
@@ -11,6 +11,11 @@ $nomflota = "Nombre";
 $acroflota = "Acrónimo";
 $usuflota = "Usuario";
 $activa = "Activa";
+$txtambito = "Ámbito de la flota";
+$txtambnada = "Sin especificar";
+$txtambloc = "Local";
+$txtambprov = "Provincial";
+$txtambaut = "Autonómico";
 $encripta = "Encriptación";
 $h2localiza = "Datos de localización de la Flota";
 $domicilio = "Domicilio";

@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Textes en valencià per a nueva_flota.php
  */
 
@@ -12,6 +12,11 @@ $acroflota = "Acrònim";
 $usuflota = "Usuari";
 $passflota = "Contrasenya";
 $activa = "Activa";
+$txtambito = "Àmbit de la flota";
+$txtambnada = "Sense especificar";
+$txtambloc = "Local";
+$txtambprov = "Provincial";
+$txtambaut = "Autonòmic";
 $encripta = "Encriptació";
 $h2otros = "Altres Dades de la Flota";
 $h2localiza = "Dades de localització de la Flota";

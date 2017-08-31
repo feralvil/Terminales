@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Textes en valencià per a terminales.php
  */
 
@@ -11,6 +11,11 @@ $nomflota = "Nom";
 $acroflota = "Acrònim";
 $usuflota = "Usuari";
 $activa = "Activa";
+$txtambito = "Àmbit de la flota";
+$txtambnada = "Sense especificar";
+$txtambloc = "Local";
+$txtambprov = "Provincial";
+$txtambaut = "Autonòmic";
 $encripta = "Encriptació";
 $h2localiza = "Dades de localització de la Flota";
 $domicilio = "Domicili";

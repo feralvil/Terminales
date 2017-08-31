@@ -1,6 +1,6 @@
 <?php
-/* 
- * Textos en castellano para terminales.php 
+/*
+ * Textos en castellano para terminales.php
  */
 
 $titulo = "Nueva Flota COMDES";
@@ -12,6 +12,11 @@ $acroflota = "Acrónimo";
 $usuflota = "Usuario";
 $passflota = "Contraseña";
 $activa = "Activa";
+$txtambito = "Ámbito de la flota";
+$txtambnada = "Sin especificar";
+$txtambloc = "Local";
+$txtambprov = "Provincial";
+$txtambaut = "Autonómico";
 $encripta = "Encriptación";
 $h2otros = "Otros datos de de la Flota";
 $h2localiza = "Datos de localización de la Flota";

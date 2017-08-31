@@ -42,12 +42,12 @@ if ($flota_usu == 100) {
 }
 
 // Iniciamos las funciones de correo:
-ini_set("SMTP", "smtp.gva.es");
-ini_set('sendmail_from', "info_comdes@gva.es");
+ini_set("SMTP", "smtp.difusio.gva.es");
+ini_set('sendmail_from', "comdes_informa@difusio.gva.es");
 $ndestinatarios = 0;
 $destinatarios = "";
-$mailnom = array("Fernando Alfonso", "Manuel Cava", "Santiago Vieco");
-$mailadr = array("alfonso_fer@gva.es", "cava_man@gva.es", "vieco_san@gva.es");
+$mailnom = array("Oficina COMDES", "Fernando Alfonso", "Manuel Cava", "Santiago Vieco", "Vicente Saurí", "Laura Segura");
+$mailadr = array("comdes@gva.es", "alfonso_fer@externos.gva.es", "cava_man@gva.es", "vieco_san@externos.gva.es", "segura_lau@gva.es");
 // Obtenemos el mensaje de la BBDD
 if (isset ($idm)){
     $sql_mensaje = "SELECT * FROM mensajes WHERE ID='$idm'";
@@ -131,13 +131,13 @@ if (isset ($idm)){
                 <th>Mail</th>
             </tr>
     ";
-    if (!empty($idincid)){
+    if (!empty($idflotacont)){
        // Identificador de flota previo
         $idfprev = 0;
         $par = 0;
         // Obtenemos los contactos del formulario (idflota-idcontacto)
-        for ($i = 0; $i < count($idincid); $i++){
-            $idfc = explode("-", $idincid[$i]);
+        for ($i = 0; $i < count($idflotacont); $i++){
+            $idfc = explode("-", $idflotacont[$i]);
             $idflota = $idfc["0"];
             $idc = $idfc["1"];
             if ($idflota != $idfprev){
@@ -182,20 +182,22 @@ if (isset ($idm)){
         $tabladest .= "
                         </table>
                     " ;
-                // Creamos el mensaje con PHPMailer:
+        // Creamos el mensaje con PHPMailer:
         $mail = new PHPMailer;
-
+        $mail->SMTPDebug = 0;
+        $mail->Debugoutput = 'html';
         $mail->CharSet = 'UTF-8';                       // Fijamos la codificación de caracteres
         $mail->isSMTP();                                // Usamos SMTP para el envío
-        $mail->Host = 'smtp.gva.es';                    // Servidor SMTP GVA
-        $mail->SMTPAuth = false;
-
-        $mail->From = 'info_comdes@gva.es';             // Establecemos el Remitente
-        $mail->FromName = 'COMDES';
+        $mail->SMTPAuth = true;
+        $mail->Host = 'smtp.difusio.gva.es';            // Servidor SMTP GVA Difusión
+        $mail->Username = 'comdes_informa';                 // Establecemos el Remitente
+        $mail->Password = "sU4TwTw7Dw";
+        $mail->From = 'comdes_informa@difusio.gva.es';  // Establecemos el Remitente
+        $mail->FromName = 'COMDES Difussió';
+        $mail->addAddress('comdes_informa@difusio.gva.es', 'Oficina COMDES');
         for ($i=0; $i < count($destmail); $i++) {
-            $mail->addAddress($destmail[$i], $destnom[$i]);
+            $mail->addBCC($destmail[$i], $destnom[$i]);
         }
-
         $mail->WordWrap = 50;                           // Set word wrap to 80 characters
         $mail->isHTML(true);                            // Formato del Mail HTML
 

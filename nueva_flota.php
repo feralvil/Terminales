@@ -112,11 +112,12 @@ if ($permiso == 2) {
             <h2><?php echo $h2otros; ?></h2>
             <table>
                 <tr>
-                    <th class="t40p"><?php echo $ciudad; ?></th>
-                    <th class="t40p"><?php echo $domicilio; ?></th>
-                    <th class="t5c"><?php echo $cp; ?></th>
-                    <th class="t5c"><?php echo $activa; ?></th>
-                    <th class="t5c"><?php echo $encripta; ?></th>
+                    <th class="t30p"><?php echo $ciudad; ?></th>
+                    <th class="t5c"><?php echo $domicilio; ?></th>
+                    <th class="t10c"><?php echo $cp; ?></th>
+                    <th class="t5c"><?php echo $txtambito; ?></th>
+                    <th class="t10c"><?php echo $activa; ?></th>
+                    <th class="t10c"><?php echo $encripta; ?></th>
                 </tr>
                 <tr>
                     <td>
@@ -132,9 +133,25 @@ if ($permiso == 2) {
                            }
 ?>
                         </select>
-                    </td>                    
+                    </td>
                     <td><input type="text" name="domicilio" value="" size="30"></td>
                     <td><input type="text" name="cp" value="" size="5"></td>
+                    <td>
+                        <select name="ambito" id="selambito">
+                            <?php
+                            $ambitos = array(
+                                'NADA' => $txtambnada, 'LOC' => $txtambloc, 'PROV' => $txtambprov, 'AUT' => $txtambaut
+                            );
+                            foreach ($ambitos as $idamb => $txtamb) {
+                            ?>
+                                <option value="<?php echo $idamb;?>" <?php if ($row_flota['AMBITO'] == $idamb) {echo "selected";} ?>>
+                                    <?php echo $txtamb;?>
+                                </option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </td>
                     <td>
                         <select name="activa">
                             <option value="SI">SI</option>
@@ -163,8 +180,8 @@ if ($permiso == 2) {
             }
             ?>
             </select>
-            
-            
+
+
             <h2><?php echo $h2rango; ?></h2>
             <p>
                 <input type="text" name="rangoini" value="" size="10"> &mdash; <input type="text" name="rangofin" value="" size="10">
@@ -174,7 +191,7 @@ if ($permiso == 2) {
                 <label for="archivo">Seleccionar:</label>
                 <input type="file" name="archivo" id="archivo" />
             </p>
-            
+
             <table>
                 <tr>
                     <td class="borde"><input type='image' name='nueva' src='imagenes/guardar.png' alt='Guardar' title="Guardar"><br>Guardar Flota</td>

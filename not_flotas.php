@@ -252,7 +252,7 @@ if ($flota_usu == 100) {
                         if ($ncont > 0){
 ?>
                             <td class='centro'>
-                                <input type="checkbox" name="idincid[]" value="<?php echo $idflota."-".$row_cont["ID"];?>" />
+                                <input type="checkbox" name="idflotacont[]" value="<?php echo $idflota."-".$row_cont["ID"];?>" />
                             </td>
                             <td><?php echo $row_cont["NOMBRE"]; ?></td>
                             <td><?php echo $row_cont["CARGO"]; ?></td>

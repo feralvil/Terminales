@@ -104,6 +104,26 @@ if ($flota_usu == 100) {
                             }
 ?>
                     </td>
+                    <td>
+                        <label for="selambito"><?php echo $txtambito; ?>: </label>
+                        <select name="ambito" id="selambito" onChange='document.formulario.submit();'>
+                            <option value='00' <?php if (($organiza == "00") || ($organiza == "")) echo ' selected'; ?>>
+                                Seleccionar
+                            </option>
+                            <?php
+                            $ambitos = array(
+                                'NADA' => $txtambnada, 'LOC' => $txtambloc, 'PROV' => $txtambprov, 'AUT' => $txtambaut
+                            );
+                            foreach ($ambitos as $idamb => $txtamb) {
+                            ?>
+                                <option value="<?php echo $idamb;?>" <?php if ($ambito == $idamb) {echo "selected";} ?>>
+                                    <?php echo $txtamb;?>
+                                </option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -153,6 +173,9 @@ if ($flota_usu == 100) {
             }
             if (($flota != '') && ($flota != "00")) {
                 $sql_flotas = $sql_flotas . " AND (flotas.ID='$flota')";
+            }
+            if (($ambito != '') && ($ambito != "00")) {
+                $sql_flotas = $sql_flotas . " AND (flotas.AMBITO='$ambito')";
             }
             if (($organiza != '') && ($organiza != "00")) {
                 $sql_flotas = $sql_flotas . " AND (flotas.ORGANIZACION='$organiza')";
