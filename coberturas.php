@@ -210,8 +210,7 @@ if ($permiso > 1){
                             if ($final > $ntbstotal){
                                 $final = $ntbstotal;
                             }
-                            echo ' &mdash; ' . ($inicio + 1) . ' a ' . $final . ' de ' . $ntbstotal . ' ' . $txtemp;?>
-                        <?php
+                            echo ' &mdash; ' . ($inicio + 1) . ' a ' . $final . ' de ' . $ntbstotal . ' ' . $txtemp;
                         }
                         ?>
                     </h4>

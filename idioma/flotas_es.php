@@ -2,14 +2,10 @@
 /*
  * Textos en castellano para flotas.php
  */
-
-$titulo = "Base de Datos de Terminales de la Red COMDES";
-$termcomdes = "Terminales COMDES";
-$flotascomdes = "Flotas COMDES";
+$titulo = "Flotas de la Red COMDES";
 $h1 = "Flotas de la Red COMDES";
-$txtcontof = "Contactos Oficiales";
-$newtab = "Abrir en una nueva pestaña";
 $criterios = "Criterios de Selección/Búsqueda";
+$newtab = "Abrir en una nueva pestaña";
 $resetcrit = "Limpiar Criterios";
 $thorg = "Organización";
 $txtambito = "Ámbito de la flota";
@@ -17,18 +13,31 @@ $txtambnada = "Sin especificar";
 $txtambloc = "Local";
 $txtambprov = "Provincial";
 $txtambaut = "Autonómico";
+$txtcontof = "Contactos Oficiales";
 $h4res = "Resultado de la búsqueda";
-$nreg = "Nº total de registros";
-$regpg = "registros por página";
+$txtflotas = "flotas";
+$regpg = "flotas por página";
 $pgtxt = "Página";
 $newflota = "Nueva Flota";
 $contflota = "Contactos de Flotas";
 $passflotas = "Contraseñas de Flotas";
-$noreg = "No hay registros";
-$campos = array("Detalle","Flota","Acrónimo","Encriptación","Organización", "Nº Terminales");
+$thdetalle = "Detalle";
+$thflota = "Flota";
+$thacro = "Acrónimo";
+$thencripta = "Encriptación";
+$thterm = "Nº Terminales";
+$thtbase = "T. Base";
+$thtmov = "T. Móviles";
+$thtport = "T. Portátiles";
+$thtdesp  = "Despachos";
+$thtotales = "Totales";
+$nom_fichero = "Flotas";
+$errsqlorg = "Error en la consulta de organizaciones";
+$errsqlselflo = "Error en la consulta del listado de flotas";
+$errsqlflotot = "Error en la consulta total de flotas";
+$errsqlflotas = "Error en la consulta de flotas";
+$errsqlterm = "Error en la consulta de los terminales de la flota";
+$errrnoflotas = "No se han encontrado flotas con los criterios seleccionados";
 $h1perm = "Acceso denegado";
-$permno = "No le está permitido el acceso a los datos de las flotas.";
-$campospdf = array("ID","Organización","Flota","Acrónimo", "Contactos", "Encriptación", "Total Terminales","T. Base","T. Móviles", "T. Portátiles", "Despachos");
-$totales = "Totales";
-$nom_fichero = "Flotas_COMDES";
+$errnoperm = "No le está permitido el acceso a esta ubicación.";
 ?>
