@@ -22,7 +22,7 @@ else {
 // ------------------------------------------------------------------------------------- //
 
 // Importamos las variables de formulario:
-import_request_variables("gp", "");
+import_request_variables("p", "");
 
 /*
  *  $permiso = variable de permisos de flota:
@@ -78,7 +78,7 @@ $objPHPExcel->getProperties()->setCategory("Terminales COMDES");
 // Fijamos los estilos generales de la hoja:
 $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
 $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
-// Fondo Gris de fila de datos
+
 // Estilos para la hoja:
 $estiloTitulo = array(
     'font' => array('bold' => true, 'size' => 12),
@@ -129,7 +129,7 @@ $estiloCentro = array(
 $objPHPExcel->setActiveSheetIndex(0);
 
 // Fijamos el título de la Hoja:
-$objPHPExcel->getActiveSheet()->setTitle("(2) DATOS");
+$objPHPExcel->getActiveSheet()->setTitle("(1) DATOS");
 
 // Tamaño de papel (A4) y orientación (Apaisado)
 $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
@@ -330,7 +330,7 @@ if ($nflota > 0){
     $objPHPExcel->getActiveSheet()->setCellValue('L25', $thtelef);
     $objPHPExcel->getActiveSheet()->mergeCells('L25:M25');
     $objPHPExcel->getActiveSheet()->getStyle('A25:M25')->applyFromArray($estiloTh);
-    $sql_contop = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'OPERATIVO')";
+    $sql_contop = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'OPERATIVO') ORDER BY ORDEN";
     $res_contop = mysql_query($sql_contop) or die(mysql_error());
     $ncontop = mysql_num_rows($res_contop);
     $fila = $fila_op = 25;
@@ -376,7 +376,7 @@ if ($nflota > 0){
     $objPHPExcel->getActiveSheet()->setCellValue('L' . $fila_tec, $thtelef);
     $objPHPExcel->getActiveSheet()->mergeCells('L' . $fila_tec . ':M' . $fila_tec);
     $objPHPExcel->getActiveSheet()->getStyle('A' . $fila_tec . ':M' . $fila_tec)->applyFromArray($estiloTh);
-    $sql_conttec = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'TECNICO')";
+    $sql_conttec = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'TECNICO') ORDER BY ORDEN";
     $res_conttec = mysql_query($sql_conttec) or die(mysql_error());
     $nconttec = mysql_num_rows($res_conttec);
     $fila = $fila_tec;
@@ -419,7 +419,7 @@ if ($nflota > 0){
     $objPHPExcel->getActiveSheet()->mergeCells('K' . $fila_24h . ':M' . $fila_24h);
     $objPHPExcel->getActiveSheet()->getStyle('A' . $fila_24h . ':M' . $fila_24h)->applyFromArray($estiloTh);
     $fila = $fila_24h;
-    $sql_cont24h = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'CONT24H')";
+    $sql_cont24h = "SELECT * FROM contactos_flotas  WHERE (FLOTA_ID = $idflota) AND (ROL = 'CONT24H') ORDER BY ORDEN";
     $res_cont24h = mysql_query($sql_cont24h) or die(mysql_error());
     $ncont24h = mysql_num_rows($res_cont24h);
     for ($i = 0 ; $i < $ncont24h; $i++){
@@ -455,7 +455,7 @@ if ($nflota > 0){
     $objPHPExcel->setActiveSheetIndex(1);
 
     // Fijamos el título de la Hoja:
-    $objPHPExcel->getActiveSheet()->setTitle("(3) ISSI");
+    $objPHPExcel->getActiveSheet()->setTitle("(2) ISSI");
 
     // Tamaño de papel (A4) y orientación (Apaisado)
     $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
@@ -600,7 +600,7 @@ if ($nflota > 0){
     $objPHPExcel->createSheet();
     $objPHPExcel->setActiveSheetIndex(2);
     // Fijamos el título de la Hoja:
-    $objPHPExcel->getActiveSheet()->setTitle("(4) GSSI-TEL");
+    $objPHPExcel->getActiveSheet()->setTitle("(3) GSSI-TEL");
 
     // Volvemos al estilo por defecto
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
@@ -701,7 +701,7 @@ if ($nflota > 0){
     $objPHPExcel->createSheet();
     $objPHPExcel->setActiveSheetIndex(3);
     // Fijamos el título de la Hoja:
-    $objPHPExcel->getActiveSheet()->setTitle("(5) ISSIs - PERMISOS");
+    $objPHPExcel->getActiveSheet()->setTitle("(4) ISSIs - PERMISOS");
 
     // Volvemos al estilo por defecto
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
@@ -780,7 +780,7 @@ if ($nflota > 0){
         $objPHPExcel->getActiveSheet()->getStyle('B10:' . $colmax . $filamax)->applyFromArray($estiloCentro);
         for ($fila = 11; $fila <= $filamax; $fila++){
             if (($fila % 2) == 0){
-                $objPHPExcel->getActiveSheet()->getStyle('A' . $fila .':' . $colmax . $fila)->applyFromArray($estiloRelleno);
+                $objPHPExcel->getActiveSheet()->getStyle('B' . $fila .':' . $colmax . $fila)->applyFromArray($estiloRelleno);
             }
         }
         $maxcol = PHPExcel_Cell::columnIndexFromString($colmax);

@@ -1,28 +1,15 @@
 <?php
 // Obtenemos el idioma de la cookie de JoomFish
 $idioma = $_COOKIE['jfcookie']['lang'];
-$lang = "idioma/flotadet_$idioma.php";
+$lang = "idioma/flotasdet_$idioma.php";
 include ($lang);
 
 // ------------ Conexión a BBDD de Terminales ----------------------------------------- //
-include("conexion.php");
-$base_datos = $dbbdatos;
-$link = mysql_connect($dbserv, $dbusu, $dbpaso);
-if (!link) {
-    echo "<b>ERROR MySQL:</b>" . mysql_error();
-}
-else {
-    // Seleccionamos la BBDD y codificamos la conexión en UTF-8:
-    if (!mysql_select_db($base_datos, $link)) {
-        echo 'Error al seleccionar la Base de Datos: ' . mysql_error();
-        exit;
-    }
-    mysql_set_charset('utf8', $link);
-}
-// ------------------------------------------------------------------------------------- //
+// Conexión a la BBDD:
+require_once 'conectabbdd.php';
 
-// Importamos las variables de formulario:
-import_request_variables("p", "");
+// Obtenemos el usuario
+include_once('autenticacion.php');
 
 /*
  *  $permiso = variable de permisos de flota:
@@ -30,8 +17,6 @@ import_request_variables("p", "");
  *      1: Permiso de consulta
  *      2: Permiso de modificación (Oficina COMDES)
  */
-// Obtenemos el usuario
-include_once('auth_user.php');
 
 $permiso = 0;
 if ($flota_usu == 100) {
@@ -45,6 +30,7 @@ else {
     $idflota = $flota_usu;
 }
 ?>
+<!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -60,148 +46,40 @@ else {
         }
 ?>
         <script type="text/javascript" src="js/jquery.js"></script>
-        <script type="text/javascript" src="js/detalle_flota.js"></script>
+        <script type="text/javascript" src="js/flotas_detalle.js"></script>
     </head>
     <body>
 <?php
 if ($permiso > 0) {
-    //datos de la tabla Flotas
-    $sql_flota = "SELECT * FROM flotas WHERE ID='$idflota'";
-    $res_flota = mysql_query($sql_flota) or die("Error en la consulta de Flota: " . mysql_error());
-    $nflota = mysql_num_rows($res_flota);
-    if ($nflota == 0) {
-        echo "<p class='error'>No hay resultados en la consulta de la Flota</p>\n";
-    }
-    else {
-        $row_flota = mysql_fetch_array($res_flota);
-        $usuario = $row_flota["LOGIN"];
-    }
-    //datos de la tabla Organizaciones:
-    $sql_org = "SELECT * FROM organizaciones WHERE ID = " . $row_flota['ORGANIZACION'];
-    $res_org = mysql_query($sql_org) or die("Error en la consulta de Organización: " . mysql_error());
-    $norg = mysql_num_rows($res_org);
-    if ($norg > 0) {
-        $row_org = mysql_fetch_array($res_org);
-        $idresporg = $row_org['RESPONSABLE'];
-        $ineorg = $row_org['INE'];
-        $sql_munorg = "SELECT * FROM municipios WHERE INE = '$ineorg'";
-        $res_munorg = mysql_query($sql_munorg) or die("Error en la consulta de Municipio de la Organización" . mysql_error());
-        $nmunorg = mysql_num_rows($res_munorg);
-        if ($nmunorg > 0) {
-            $row_munorg = mysql_fetch_array($res_munorg);
-        }
-    }
-
-    //datos de la tabla Terminales
-    // Tipos de termninales
-    $tipos = array("F", "M%", "MB", "MA", "MG", "P%", "PB", "PA", "PX", "D");
-    $nterm = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    $sql_term = "SELECT * FROM terminales WHERE FLOTA='$idflota'";
-    $res_term = mysql_query($sql_term) or die("Error en la consulta de Terminales" . mysql_error());
-    $tot_term = mysql_num_rows($res_term);
-    for ($j = 0; $j < count($tipos); $j++) {
-        $sql_term = "SELECT * FROM terminales WHERE FLOTA='$idflota' AND TIPO LIKE '" . $tipos[$j] . "'";
-        $res_term = mysql_query($sql_term) or die("Error en la consulta de " . $cabecera[$j] . ": " . mysql_error());
-        $nterm[$j] = mysql_num_rows($res_term);
-    }
-    //datos de la tabla Municipio
-    // INE
-    $ine = $row_flota["INE"];
-    $sql_mun = "SELECT * FROM municipios WHERE INE='$ine'";
-    $res_mun = mysql_query($sql_mun) or die("Error en la consulta de Municipio" . mysql_error());
-    $nmun = mysql_num_rows($res_mun);
-    if ($nmun == 0) {
-        echo "<p class='error'>No hay resultados en la consulta del Municipio</p>\n";
-    }
-    else {
-        $row_mun = mysql_fetch_array($res_mun);
-    }
-
-    // Datos de contactos
-    $sql_contactos = "SELECT * FROM contactos_flotas WHERE FLOTA_ID = $idflota ORDER BY ROL ASC, ORDEN ASC";
-    $res_contactos = mysql_query($sql_contactos) or die("Error en la consulta de contacto: " . mysql_error());
-    $ncontactos = mysql_num_rows($res_contactos);
-    $responsable = 0;
-    $operativos = array();
-    $tecnicos = array();
-    $cont24h = array();
-    if ($ncontactos > 0){
-        for ($i = 0; $i < $ncontactos; $i++){
-            $row_cont = mysql_fetch_array($res_contactos);
-            switch ($row_cont['ROL']){
-                case 'RESPONSABLE':{
-                    $responsable = $row_cont['CONTACTO_ID'];
-                    break;
-                }
-                case 'OPERATIVO':{
-                    array_push($operativos, $row_cont['CONTACTO_ID']);
-                    break;
-                }
-                case 'TECNICO':{
-                    array_push($tecnicos, $row_cont['CONTACTO_ID']);
-                    break;
-                }
-                case 'CONT24H':{
-                    array_push($cont24h, $row_cont['CONTACTO_ID']);
-                    break;
-                }
-            }
-        }
-    }
-
-    ############# Enlaces para la exportación #######
-    $linkpdf = "document.exportar.action='pdfflota.php';document.exportar.submit();";
-    $linkxls = "document.exportar.action='xlsflota.php';document.exportar.submit();";
-
+    require_once 'sql/flotas_detalle.php';
     if (isset ($update)){
-        if ($update == "KO"){
-            $clase = "flashko";
-            $imagen = "imagenes/cancelar.png";
-            $alt = "Error";
-        }
-        if ($update == "OK"){
-            $clase = "flashok";
-            $imagen = "imagenes/okm.png";
-            $alt = "OK";
-        }
-?>
-        <p class="<?php echo $clase;?>">
-            <img src="<?php echo $imagen;?>" alt="<?php echo $alt;?>" title="<?php echo $alt;?>"> &mdash; <?php echo $mensflash;?>
-        </p>
-<?php
+        require_once 'mensflash.php';
     }
 ?>
-        <form name="exportar" action="#" method="POST" target="_blank">
+        <form name="exportar" id="export" action="#" method="POST" target="_blank">
             <input type="hidden" name="idflota" value="<?php echo $idflota;?>">
         </form>
         <form name="detalleflota" method="POST" action="detalle_flota.php" target="_blank">
             <input type="hidden" name="idflota" value="<?php echo $idflota; ?>" />
             <h1>
-                Flota <?php echo $row_flota["FLOTA"]; ?> (<?php echo $row_flota["ACRONIMO"]; ?>) &mdash;
-                <a href="#" onclick="<?php echo $linkpdf; ?>"><img src="imagenes/pdf.png" alt="PDF" title="PDF"></a> &mdash;
-                <a href="#" onclick="<?php echo $linkxls; ?>"><img src="imagenes/xls.png" alt="Excel" title="Excel"></a> &mdash;
-                <input type='image' name='action' src='imagenes/newtab.png' alt='<?php echo $newtab;?>' title="<?php echo $newtab;?>">
+                <?php echo $h1 . ' ' . $flota["FLOTA"] . ' (' . $flota["ACRONIMO"] . ') &mdash; ';?>
+                <a href="#" id="linkpdf"><img src="imagenes/pdf.png" alt="<?php echo $txtpdf;?>" title="<?php echo $txtpdf;?>"></a> &mdash;
+                <a href="#" id="linkexcel"><img src="imagenes/xls.png" alt="<?php echo $txtexcel;?>" title="<?php echo $txtexcel;?>"></a> &mdash;
+                <input type='image' name='action' src='imagenes/newtab.png' alt='<?php echo $txtnewtab;?>' title="<?php echo $txtnewtab;?>">
             </h1>
         </form>
         <?php
         // Select de Flotas
         if ($permiso > 1){
-            $sql_flotas = "SELECT * FROM flotas ORDER BY FLOTA ASC";
-            $res_flotas = mysql_query($sql_flotas) or die("Error en la consulta de Flota: " . mysql_error());
-            $nflotas = mysql_num_rows($res_flotas);
-            $ambitos = array(
-                'NADA' => $txtambnada, 'LOC' => $txtambloc, 'PROV' => $txtambprov, 'AUT' => $txtambaut
-            );
         ?>
-            <h2>Seleccionar Flota</h2>
-            <form name="selflota" action="detalle_flota.php" method="post">
-                <select name="idflota" onchange="document.selflota.submit();">
+            <h2><?php echo $h2selflota;?></h2>
+            <form name="selflota" id="selflota" action="detalle_flota.php" method="post">
+                <select name="idflota" id="idflota">
                 <?php
-                for ($i = 0; $i < $nflotas; $i++){
-                    $sel_flota = mysql_fetch_array($res_flotas);
+                foreach ($selflotas as $flota_id => $flota_nombre) {
                 ?>
-                    <option value="<?php echo $sel_flota['ID'];?>" <?php if ($idflota == $sel_flota['ID']) {echo "selected";} ?>>
-                        <?php echo $sel_flota['FLOTA'];?>
+                    <option value="<?php echo $flota_id;?>" <?php if ($idflota == $flota_id) {echo "selected";} ?>>
+                        <?php echo $flota_nombre;?>
                     </option>
                 <?php
                 }
@@ -210,468 +88,350 @@ if ($permiso > 0) {
             </form>
         <?php
         }
+        if ($nflota > 0){
+            $ambitos = array('NADA' => $txtambnada, 'LOC' => $txtambloc, 'PROV' => $txtambprov, 'AUT' => $txtambaut);
         ?>
-        <div id="contenido">
-            <div id="pestanyas">
-                <ul id="tab">
-                    <li>
-                        <a href="#" id="linkhome" class="activo"><?php echo $tabhome;?></a>
-                    </li>
-                    <li><a href="#" id="linkcont"><?php echo $tabcont;?></a></li>
-                    <li><a href="#" id="linkterm"><?php echo $tabterm;?></a></li>
-                </ul>
-            </div>
-            <div id="limpia"></div>
-            <div id="inicio">
-                <h2><?php echo $h2admin; ?></h2>
-                <table>
-                    <tr>
-                        <th class="t40p"><?php echo $nomflota; ?></th>
-                        <th class="t5c"><?php echo $acroflota; ?></th>
-                        <th class="t5c"><?php echo $usuflota; ?></th>
-                        <th class="t10c"><?php echo $txtambito; ?></th>
-                        <th class="t10c"><?php echo $encripta; ?></th>
-                    </tr>
-                    <tr>
-                        <td><?php echo $row_flota["FLOTA"]; ?></td>
-                        <td><?php echo $row_flota["ACRONIMO"]; ?></td>
-                        <td><?php echo $row_flota["LOGIN"]; ?></td>
-                        <td><?php echo $ambitos[$row_flota["AMBITO"]]; ?></td>
-                        <td><?php echo $row_flota["ENCRIPTACION"]; ?></td>
-                    </tr>
-                </table>
-                <h2><?php echo $h2localiza; ?></h2>
-                <table>
-                    <tr>
-                        <th class="t40p"><?php echo $domicilio; ?></th>
-                        <th class="t10c"><?php echo $cp; ?></th>
-                        <th class="t30"><?php echo $ciudad; ?></th>
-                        <th class="t5c"><?php echo $provincia; ?></th>
-                    </tr>
-                    <tr>
-                        <td><?php echo $row_flota["DOMICILIO"]; ?></td>
-                        <td><?php echo $row_flota["CP"]; ?></td>
-                        <td><?php echo $row_mun["MUNICIPIO"]; ?></td>
-                        <td><?php echo $row_mun["PROVINCIA"]; ?></td>
-                    </tr>
-                </table>
-                <h2><?php echo $h2organiza; ?></h2>
-                <?php
-                if ($norg > 0){
-                ?>
-                    <form name="detorg" action="detalle_organizacion.php" method="POST">
-                        <input type="hidden" name="idorg" value="<?php echo $row_org['ID'];?>">
-                    </form>
+            <form name="modflota" id="modflota" action="#" method="POST">
+                <input type="hidden" name="idflota" value="<?php echo $idflota; ?>">
+            </form>
+            <form name="formterm" id="formterm" action="terminales.php" method="POST">
+                <input type="hidden" name="flota" value="<?php echo $idflota; ?>">
+            </form>
+            <div id="contenido">
+                <div id="pestanyas">
+                    <ul id="tab">
+                        <li>
+                            <a href="#" id="linkhome" class="activo"><?php echo $tabhome;?></a>
+                        </li>
+                        <li><a href="#" id="linkcont"><?php echo $tabcont;?></a></li>
+                        <li><a href="#" id="linkterm"><?php echo $tabterm;?></a></li>
+                    </ul>
+                </div>
+                <div id="limpia"></div>
+                <div id="inicio">
+                    <h2><?php echo $h2flota; ?></h2>
                     <table>
                         <tr>
-                            <th><?php echo $thorg; ?></th>
-                            <th><?php echo $ciudad; ?></th>
-                            <th><?php echo $provincia; ?></th>
-                            <th><?php echo $thirorg; ?></th>
+                            <th class="t40p"><?php echo $thflota; ?></th>
+                            <th class="t5c"><?php echo $thacronimo; ?></th>
+                            <th class="t5c"><?php echo $thusuario; ?></th>
+                            <th class="t10c"><?php echo $thambito; ?></th>
+                            <th class="t10c"><?php echo $thencripta; ?></th>
                         </tr>
                         <tr>
-                            <td><?php echo $row_org['ORGANIZACION']; ?></td>
-                            <td><?php echo $row_munorg["MUNICIPIO"]; ?></td>
-                            <td><?php echo $row_munorg["PROVINCIA"]; ?></td>
-                            <td class="centro">
-                                <a href="#" onclick="document.detorg.submit();">
-                                    <img src="imagenes/ir.png" alt="<?php echo $thirorg; ?>" title="<?php echo $thirorg; ?>">
-                                </a>
-                            </td>
+                            <td><?php echo $flota["FLOTA"]; ?></td>
+                            <td><?php echo $flota["ACRONIMO"]; ?></td>
+                            <td><?php echo $flota["LOGIN"]; ?></td>
+                            <td><?php echo $ambitos[$flota["AMBITO"]]; ?></td>
+                            <td><?php echo $flota["ENCRIPTACION"]; ?></td>
                         </tr>
                     </table>
-                <?php
-                }
-                else{
-                ?>
-                    <p class='error'><?php echo $errnoorg; ?></p>
-                <?php
-                }
-                ?>
-                <table>
-                    <tr>
-                        <td class="borde">
-                            <a href='#' onclick="document.modflota.action='acceso_flota.php';document.modflota.submit();">
-                                <img src='imagenes/key.png' alt='<?php echo $acceso; ?>' title='<?php echo $acceso; ?>'>
-                            </a><br><?php echo $acceso; ?>
-                        </td>
-                        <td class="borde">
-                            <a href='#' onclick="document.modflota.action='grupos_flota.php';document.modflota.submit();">
-                                <img src='imagenes/grupos.png' alt='<?php echo $grupflota; ?>' title='<?php echo $grupflota; ?>'>
-                            </a><br><?php echo $grupflota; ?>
-                        </td>
-                        <td class="borde">
-                            <a href='#' onclick="document.modflota.action='permisos_flota.php';document.modflota.submit();">
-                                <img src='imagenes/permisos.png' alt='Permisos de Flota' title='Permisos de Flota'>
-                            </a><br>Permisos de Flota
-                        </td>
-                        <?php
-                        if ($permiso > 1){
-                        ?>
-                            <td class="borde">
-                                <a href='#' onclick="document.modflota.action='editar_flota.php';document.modflota.submit();">
-                                    <img src='imagenes/pencil.png' alt='<?php echo $editflota; ?>' title='<?php echo $editflota; ?>'>
-                                </a><br><?php echo $editflota; ?>
-                            </td>
-                            <td class="borde">
-                                <a href='#' onclick="document.modflota.action='excel_flota.php';document.modflota.submit();">
-                                    <img src='imagenes/impexcel.png' alt='Importar Excel' title="Importar Excel">
-                                </a><br><?php echo $datexcel; ?>
-                            </td>
-                        <?php
-                        }
-                        ?>
-                    </tr>
-                </table>
-            </div>
-            <div id="contactos">
-                <h2><?php echo $h2cont; ?></h2>
-                <?php
-                if ($ncontactos == 0){
-                ?>
-                    <p class='error'><?php echo $errnocont; ?></p>
-                <?php
-                }
-                else {
-                    if ($row_flota['FORMCONT'] == 'NO'){
-                        $clase = "flashko";
-                        $imagen = "imagenes/cancelar.png";
-                        $alt = "Error";
-                        $textoflash = $contnoupd;
-                    }
-                    else{
-                        $clase = "flashok";
-                        $imagen = "imagenes/okm.png";
-                        $alt = "OK";
-                        $fechacomp = explode('-', $row_flota['UPDCONT']);
-                        $textoflash = $contupd . " " . $fechacomp[2] . '/' . $fechacomp[1] . '/' . $fechacomp[0];
-                    }
-                ?>
-                    <p class="<?php echo $clase;?>">
-                        <img src="<?php echo $imagen;?>" alt="<?php echo $alt;?>" title="<?php echo $alt;?>"> &mdash; <?php echo $textoflash;?>
-                    </p>
-                    <h3><?php echo $h3resporg; ?></h3>
+                    <h2><?php echo $h2localiza; ?></h2>
+                    <table>
+                        <tr>
+                            <th class="t40p"><?php echo $thdomicilio; ?></th>
+                            <th class="t10c">C.P.</th>
+                            <th class="t30"><?php echo $thciudad; ?></th>
+                            <th class="t5c"><?php echo $thprovincia; ?></th>
+                        </tr>
+                        <tr>
+                            <td><?php echo $flota["DOMICILIO"]; ?></td>
+                            <td><?php echo $flota["CP"]; ?></td>
+                            <td><?php echo $municipio["MUNICIPIO"]; ?></td>
+                            <td><?php echo $municipio["PROVINCIA"]; ?></td>
+                        </tr>
+                    </table>
+                    <h2><?php echo $h2organiza; ?></h2>
                     <?php
-                    $ncontacto = 0;
-                    if ($idresporg > 0){
-                        $sql_contacto = "SELECT * FROM contactos WHERE ID = $idresporg";
-                        $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de responsable de organización: " . mysql_error());
-                        $ncontacto = mysql_num_rows($res_contacto);
-                        if ($ncontacto > 0){
-                            $contacto = mysql_fetch_array($res_contacto);
-                        }
-                    }
-                    if ($ncontacto == 0){
+                    if ($norganiza > 0){
                     ?>
-                        <p class='error'><?php echo $errnocontorg; ?></p>
-                    <?php
-                    }
-                    else{
-                    ?>
+                        <form name="detorg" id="detorg" action="detalle_organizacion.php" method="POST">
+                            <input type="hidden" name="idorg" value="<?php echo $organiza['ID'];?>">
+                        </form>
                         <table>
                             <tr>
-                                <th class="t5c"><?php echo $thorg; ?></th>
-                                <th class="t5c"><?php echo $nomflota; ?></th>
-                                <th class="t10c">DNI</th>
-                                <th class="t5c"><?php echo $cargo; ?></th>
-                                <th class="t5c"><?php echo $mail; ?></th>
-                                <th class="t10c"><?php echo $telefono; ?></th>
+                                <th><?php echo $thorganiza; ?></th>
+                                <th><?php echo $thciudad; ?></th>
+                                <th><?php echo $thprovincia; ?></th>
+                                <th><?php echo $thirorg; ?></th>
                             </tr>
                             <tr>
-                                <td><?php echo $row_org['ORGANIZACION']; ?></td>
-                                <td><?php echo $contacto['NOMBRE']; ?></td>
-                                <td><?php echo $contacto["NIF"]; ?></td>
-                                <td><?php echo $contacto["CARGO"]; ?></td>
-                                <td><?php echo $contacto["MAIL"]; ?></td>
-                                <td><?php echo $contacto["TELEFONO"]; ?></td>
-                            </tr>
-                        </table>
-                    <?php
-                    }
-                    ?>
-                    <h3><?php echo $h3resp; ?></h3>
-                    <?php
-                    if ($responsable > 0){
-                        $sql_contacto = "SELECT * FROM contactos WHERE ID = $responsable";
-                        $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de responsable: " . mysql_error());
-                        $ncontacto = mysql_num_rows($res_contacto);
-                        if ($ncontacto > 0){
-                            $contacto = mysql_fetch_array($res_contacto);
-                        }
-
-                    ?>
-                        <table>
-                            <tr>
-                                <th class="t4c"><?php echo $nomflota; ?></th>
-                                <th class="t10c">DNI</th>
-                                <th class="t4c"><?php echo $cargo; ?></th>
-                                <th class="t5c"><?php echo $mail; ?></th>
-                                <th class="t5c"><?php echo $telefono; ?></th>
-                            </tr>
-                            <tr>
-                                <td><?php echo $contacto['NOMBRE']; ?></td>
-                                <td><?php echo $contacto["NIF"]; ?></td>
-                                <td><?php echo $contacto["CARGO"]; ?></td>
-                                <td><?php echo $contacto["MAIL"]; ?></td>
-                                <td><?php echo $contacto["TELEFONO"]; ?></td>
+                                <td><?php echo $organiza['ORGANIZACION']; ?></td>
+                                <td><?php echo $munorg["MUNICIPIO"]; ?></td>
+                                <td><?php echo $munorg["PROVINCIA"]; ?></td>
+                                <td class="centro">
+                                    <a href="#" id="linkorg">
+                                        <img src="imagenes/ir.png" alt="<?php echo $thirorg; ?>" title="<?php echo $thirorg; ?>">
+                                    </a>
+                                </td>
                             </tr>
                         </table>
                     <?php
                     }
                     else{
                     ?>
-                        <p class="error"><?php echo $errnoresp; ?></p>
+                        <p class='error'><?php echo $errnoorg; ?></p>
                     <?php
                     }
                     ?>
-                    <h3><?php echo $h3operativo; ?></h3>
-                    <?php
-                    if (count($operativos) > 0){
-                    ?>
-                        <table>
-                            <tr>
-                                <th class="t4c"><?php echo $nomflota; ?></th>
-                                <th class="t10c">DNI</th>
-                                <th class="t4c"><?php echo $cargo; ?></th>
-                                <th class="t5c"><?php echo $mail; ?></th>
-                                <th class="t5c"><?php echo $telefono; ?></th>
-                            </tr>
-                            <?php
-                            $i = 0;
-                            foreach ($operativos as $operativo){
-                                $sql_contacto = "SELECT * FROM contactos WHERE ID = $operativo";
-                                $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de operativos: " . mysql_error());
-                                $ncontacto = mysql_num_rows($res_contacto);
-                                if ($ncontacto > 0){
-                                    $contacto = mysql_fetch_array($res_contacto);
-                                }
-                            ?>
-                                <tr <?php if (($i % 2) == 1) {echo "class = 'filapar'";} ?>>
-                                    <td><?php echo $contacto['NOMBRE']; ?></td>
-                                    <td><?php echo $contacto["NIF"]; ?></td>
-                                    <td><?php echo $contacto["CARGO"]; ?></td>
-                                    <td><?php echo $contacto["MAIL"]; ?></td>
-                                    <td><?php echo $contacto["TELEFONO"]; ?></td>
-                                </tr>
-                            <?php
-                                $i++;
-                            }
-                            ?>
-                        </table>
-                    <?php
-                    }
-                    else{
-                    ?>
-                        <p class="error"><?php echo $errnoop; ?></p>
-
-                    <?php
-                    }
-                    ?>
-                    <h3><?php echo $h3tecnico; ?></h3>
-                    <?php
-                    if (count($tecnicos) > 0){
-                    ?>
-                        <table>
-                            <tr>
-                                <th class="t4c"><?php echo $nomflota; ?></th>
-                                <th class="t10c">DNI</th>
-                                <th class="t4c"><?php echo $cargo; ?></th>
-                                <th class="t5c"><?php echo $mail; ?></th>
-                                <th class="t5c"><?php echo $telefono; ?></th>
-                            </tr>
-                            <?php
-                            $i = 0;
-                            foreach ($tecnicos as $tecnico){
-                                $sql_contacto = "SELECT * FROM contactos WHERE ID = $tecnico";
-                                $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de técnicos: " . mysql_error());
-                                $ncontacto = mysql_num_rows($res_contacto);
-                                if ($ncontacto > 0){
-                                    $contacto = mysql_fetch_array($res_contacto);
-                                }
-                            ?>
-                                <tr <?php if (($i % 2) == 1) {echo "class = 'filapar'";} ?>>
-                                    <td><?php echo $contacto['NOMBRE']; ?></td>
-                                    <td><?php echo $contacto["NIF"]; ?></td>
-                                    <td><?php echo $contacto["CARGO"]; ?></td>
-                                    <td><?php echo $contacto["MAIL"]; ?></td>
-                                    <td><?php echo $contacto["TELEFONO"]; ?></td>
-                                </tr>
-                            <?php
-                                $i++;
-                            }
-                            ?>
-                        </table>
-                    <?php
-                    }
-                    else{
-                    ?>
-                        <p class="error"><?php echo $errnotec; ?></p>
-                    <?php
-                    }
-                    ?>
-                    <h3><?php echo $h3cont24h; ?></h3>
-                    <?php
-                    if (count($cont24h) > 0){
-                    ?>
-                        <table>
-                            <tr>
-                                <th class="t4c"><?php echo $nomflota; ?></th>
-                                <th class="t5c"><?php echo $mail; ?></th>
-                                <th class="t5c"><?php echo $telefono; ?></th>
-                            </tr>
-                            <?php
-                            $i = 0;
-                            foreach ($cont24h as $cont){
-                                $sql_contacto = "SELECT * FROM contactos WHERE ID = $cont";
-                                $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de contacto 24x7: " . mysql_error());
-                                $ncontacto = mysql_num_rows($res_contacto);
-                                if ($ncontacto > 0){
-                                    $contacto = mysql_fetch_array($res_contacto);
-                                }
-                            ?>
-                                <tr <?php if (($i % 2) == 1) {echo "class = 'filapar'";} ?>>
-                                    <td><?php echo $contacto['NOMBRE']; ?></td>
-                                    <td><?php echo $contacto["MAIL"]; ?></td>
-                                    <td><?php echo $contacto["TELEFONO"]; ?></td>
-                                </tr>
-                            <?php
-                                $i++;
-                            }
-                            ?>
-                        </table>
-                    <?php
-                    }
-                    else{
-                    ?>
-                        <p class="error"><?php echo $errno24h; ?></p>
-                    <?php
-                    }
-                    ?>
-                <?php
-                }
-                if ($permiso > 1){
-                ?>
                     <table>
                         <tr>
                             <td class="borde">
-                                <a href='#' onclick="document.modflota.action='contactos_flota.php';document.modflota.submit();">
-                                    <img src='imagenes/editacont.png' alt='<?php echo $editcont; ?>' title='<?php echo $editcont; ?>'>
-                                </a><br><?php echo $editcont; ?>
+                                <a href='flotas.php'>
+                                    <img src='imagenes/atras.png' alt='<?php echo $botatras; ?>' title='<?php echo $botatras; ?>'>
+                                </a><br><?php echo $botatras; ?>
+                            </td>
+                            <td class="borde">
+                                <a href='#' id="linkacceso">
+                                    <img src='imagenes/key.png' alt='<?php echo $botacceso; ?>' title='<?php echo $botacceso; ?>'>
+                                </a><br><?php echo $botacceso; ?>
+                            </td>
+                            <td class="borde">
+                                <a href='#' id="linkgrupos">
+                                    <img src='imagenes/grupos.png' alt='<?php echo $botgrupos; ?>' title='<?php echo $botgrupos; ?>'>
+                                </a><br><?php echo $botgrupos; ?>
+                            </td>
+                            <td class="borde">
+                                <a href='#' id="linkperm">
+                                    <img src='imagenes/permisos.png' alt='<?php echo $botpermiso; ?>' title='<?php echo $botpermiso; ?>'>
+                                </a><br><?php echo $botpermiso; ?>
+                            </td>
+                            <?php
+                            if ($permiso > 1){
+                            ?>
+                                <td class="borde">
+                                    <a href='#' id="linkeditar">
+                                        <img src='imagenes/pencil.png' alt='<?php echo $boteditar; ?>' title='<?php echo $boteditar; ?>'>
+                                    </a><br><?php echo $boteditar; ?>
+                                </td>
+                                <td class="borde">
+                                    <a href='#' id="linkimpexcel">
+                                        <img src='imagenes/impexcel.png' alt='<?php echo $botimportar; ?>' title="<?php echo $botimportar; ?>">
+                                    </a><br><?php echo $botimportar; ?>
+                                </td>
+                            <?php
+                            }
+                            ?>
+                        </tr>
+                    </table>
+                </div>
+                <div id="contactos">
+                    <h2><?php echo $h2contflota; ?></h2>
+                    <?php
+                    if (count($contactos) > 0){
+                        if ($flota['FORMCONT'] == 'NO'){
+                            $clase = "flashko";
+                            $imagen = "imagenes/cancelar.png";
+                            $alt = "Error";
+                            $textoflash = $menscontno;
+                        }
+                        else{
+                            $clase = "flashok";
+                            $imagen = "imagenes/okm.png";
+                            $alt = "OK";
+                            $fechacomp = explode('-', $flota['UPDCONT']);
+                            $textoflash = $menscontok . " " . $fechacomp[2] . '/' . $fechacomp[1] . '/' . $fechacomp[0];
+                        }
+                    ?>
+                        <p class="<?php echo $clase;?>">
+                            <img src="<?php echo $imagen;?>" alt="<?php echo $alt;?>" title="<?php echo $alt;?>"> &mdash; <?php echo $textoflash;?>
+                        </p>
+                        <?php
+                        $indices = array('RESPORG', 'RESPONSABLE', 'OPERATIVO', 'TECNICO', 'CONT24H');
+                        $h3 = array(
+                            'RESPORG' => $h3resporg, 'RESPONSABLE' => $h3respflota, 'OPERATIVO' => $h3operativo,
+                            'TECNICO' => $h3tecnico, 'CONT24H' => $h3cont24h
+                        );
+                        $errores = array(
+                            'RESPORG' => $errnoresporg, 'RESPONSABLE' => $errnorespflota, 'OPERATIVO' => $errnoop,
+                            'TECNICO' => $errnotec, 'CONT24H' => $errno24h
+                        );
+                        foreach ($indices as $indice) {
+                    ?>
+                            <h3><?php echo $h3[$indice];?></h3>
+                            <?php
+                            if (count($contactos[$indice]) > 0){
+                            ?>
+                                <table>
+                                    <tr>
+                                        <?php
+                                        if ($indice == "RESPORG"){
+                                        ?>
+                                            <th><?php echo $thorganiza;?></th>
+                                        <?php
+                                        }
+                                        ?>
+                                        <th><?php echo $thnombre;?></th>
+                                        <?php
+                                        if ($indice != "CONT24H"){
+                                        ?>
+                                            <th>DNI</th>
+                                            <th><?php echo $thcargo;?></th>
+                                        <?php
+                                        }
+                                        ?>
+                                        <th><?php echo $thmail;?></th>
+                                        <th><?php echo $thtelef;?></th>
+                                    </tr>
+                                    <?php
+                                    foreach ($contactos[$indice] as $contacto){
+                                    ?>
+                                        <tr>
+                                            <?php
+                                            if ($indice == "RESPORG"){
+                                            ?>
+                                                <td><?php echo $organiza['ORGANIZACION'];?></td>
+                                            <?php
+                                            }
+                                            ?>
+                                            <td><?php echo $contacto['NOMBRE'];?></td>
+                                            <?php
+                                            if ($indice != "CONT24H"){
+                                            ?>
+                                                <td><?php echo $contacto['NIF'];?></td>
+                                                <td><?php echo $contacto['CARGO'];?></td>
+                                            <?php
+                                            }
+                                            ?>
+                                            <td><?php echo $contacto['MAIL'];?></td>
+                                            <td><?php echo $contacto['TELEFONO'];?></td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
+                                </table>
+                            <?php
+                            }
+                            else {
+                            ?>
+                                <p class='error'><?php echo $errores[$indice]; ?></p>
+                    <?php
+                            }
+                        }
+                    }
+                    else {
+                    ?>
+                        <p class='error'><?php echo $errnocont; ?></p>
+                    <?php
+                    }
+                    if ($permiso > 1){
+                    ?>
+                        <table>
+                            <tr>
+                                <td class="borde">
+                                    <a href='#' id="linkcontactos">
+                                        <img src='imagenes/editacont.png' alt='<?php echo $botcontactos; ?>' title='<?php echo $botcontactos; ?>'>
+                                    </a><br><?php echo $botcontactos; ?>
+                                </td>
+                            </tr>
+                        </table>
+                    <?php
+                    }
+                    ?>
+                </div>
+                <div id="term">
+                    <h2><?php echo $h2termflota; ?></h2>
+                    <h3><?php echo $h3rangoterm; ?></h3>
+                    <?php
+                    if ($flota['RANGO'] != ""){
+                    ?>
+                        <p><?php echo $flota['RANGO']; ?></p>
+                    <?php
+                    }
+                    else{
+                    ?>
+                        <p class="error"><?php echo $mensrangono; ?></p>
+                    <?php
+                    }
+                    ?>
+                    <h3><?php echo $h3nterm; ?></h3>
+                    <table>
+                        <tr>
+                            <th colspan="8"><?php echo $thtotterm; ?></th>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="centro"><?php echo $ntermflota; ?></td>
+                        </tr>
+                        <tr>
+                            <th><?php echo $thtermbase; ?></th>
+                            <th colspan="3"><?php echo $thtermmov; ?></th>
+                            <th colspan="3"><?php echo $thtermport; ?></th>
+                            <th><?php echo $thtermdesp; ?></th>
+                        </tr>
+                        <tr>
+                            <td class="centro" rowspan="3"><?php echo $nterminales['F']; ?></td>
+                            <td class="centro" colspan="3"><?php echo $nterminales['M%']; ?></td>
+                            <td class="centro" colspan="3"><?php echo $nterminales['P%']; ?></td>
+                            <td class="centro" rowspan="3"><?php echo $nterminales['D']; ?></td>
+                        </tr>
+                        <tr>
+                            <th><?php echo $thtermmb; ?></th>
+                            <th><?php echo $thtermma; ?></th>
+                            <th><?php echo $thtermmg; ?></th>
+                            <th><?php echo $thtermpb; ?></th>
+                            <th><?php echo $thtermpa; ?></th>
+                            <th><?php echo $thtermpx; ?></th>
+                        </tr>
+                        <tr>
+                            <td class="centro"><?php echo $nterminales['MB']; ?></td>
+                            <td class="centro"><?php echo $nterminales['MA']; ?></td>
+                            <td class="centro"><?php echo $nterminales['MG']; ?></td>
+                            <td class="centro"><?php echo $nterminales['PB']; ?></td>
+                            <td class="centro"><?php echo $nterminales['PA']; ?></td>
+                            <td class="centro"><?php echo $nterminales['PX']; ?></td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <?php
+                            if ($permiso == 2) {
+                            ?>
+                                <td class="borde">
+                                    <a href='#' id="linkakdc">
+                                        <img src='imagenes/akdc.png' alt='<?php echo $botakdc; ?>' title="<?php echo $botakdc; ?>">
+                                    </a><br><?php echo $botakdc; ?>
+                                </td>
+                                <td class="borde">
+                                    <a href='#' id="linkbase">
+                                        <img src='imagenes/base_add.png' alt='<?php echo $botbase; ?>' title="<?php echo $botbase; ?>">
+                                    </a><br><?php echo $botbase; ?>
+                                </td>
+                                <td class="borde">
+                                    <a href='#' id="linkaut">
+                                        <img src='imagenes/autterm.png' alt='<?php echo $botaut; ?>' title='<?php echo $botaut; ?>'>
+                                    </a><br><?php echo $botaut; ?>
+                                </td>
+                                <td class="borde">
+                                    <a href='#' id="linkdots">
+                                        <img src='imagenes/dots.png' alt='<?php echo $botdots; ?>' title='<?php echo $botdots; ?>'>
+                                    </a><br><?php echo $botdots; ?>
+                                </td>
+                            <?php
+                            }
+                            ?>
+                            <td class="borde">
+                                <a href='#' id="linktermflota">
+                                    <img src='imagenes/lista.png' alt='<?php echo $botterm; ?>' title='<?php echo $botterm; ?>'>
+                                </a><br><?php echo $botterm; ?>
                             </td>
                         </tr>
                     </table>
-                <?php
-                }
-                ?>
+                </div>
             </div>
-            <div id="term">
-                <h2><?php echo $h2term; ?></h2>
-                <h3><?php echo $h3rango; ?></h3>
-                <?php
-                if ($row_flota['RANGO'] != ""){
-                ?>
-                    <p><?php echo $row_flota['RANGO']; ?></p>
-                <?php
-                }
-                else{
-                ?>
-                    <p class="error"><?php echo $errnorango; ?></p>
-                <?php
-                }
-                ?>
-                <h3><?php echo $h3nterm; ?></h3>
-                <table>
-                    <tr>
-                        <th colspan="8"><?php echo $totalterm; ?></th>
-                    </tr>
-                    <tr>
-                        <td colspan="8" class="centro"><?php echo $tot_term; ?></td>
-                    </tr>
-                    <tr>
-                        <th><?php echo $cabecera[0]; ?></th>
-                        <th colspan="3"><?php echo $cabecera[1]; ?></th>
-                        <th colspan="3"><?php echo $cabecera[5]; ?></th>
-                        <th><?php echo $cabecera[9]; ?></th>
-                    </tr>
-                    <tr>
-                        <td class="centro" rowspan="3"><?php echo $nterm[0]; ?></td>
-                        <td class="centro" colspan="3"><?php echo $nterm[1]; ?></td>
-                        <td class="centro" colspan="3"><?php echo $nterm[5]; ?></td>
-                        <td class="centro" rowspan="3"><?php echo $nterm[9]; ?></td>
-                    </tr>
-                    <tr>
-                        <th><?php echo $cabecera[2]; ?></th>
-                        <th><?php echo $cabecera[3]; ?></th>
-                        <th><?php echo $cabecera[4]; ?></th>
-                        <th><?php echo $cabecera[6]; ?></th>
-                        <th><?php echo $cabecera[7]; ?></th>
-                        <th><?php echo $cabecera[8]; ?></th>
-                    </tr>
-                    <tr>
-                        <td class="centro"><?php echo $nterm[2]; ?></td>
-                        <td class="centro"><?php echo $nterm[3]; ?></td>
-                        <td class="centro"><?php echo $nterm[4]; ?></td>
-                        <td class="centro"><?php echo $nterm[6]; ?></td>
-                        <td class="centro"><?php echo $nterm[7]; ?></td>
-                        <td class="centro"><?php echo $nterm[8]; ?></td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <?php
-                        if ($permiso == 2) {
-                        ?>
-                            <td class="borde">
-                                <a href='#' onclick="document.modflota.action='akdc_flota.php';document.modflota.submit();">
-                                    <img src='imagenes/akdc.png' alt='AKDC' title='AKDC'>
-                                </a><br>Generar AKDC
-                            </td>
-
-                            <td class="borde">
-                                <a href='#' onclick="document.modflota.action='base_flota.php';document.modflota.submit();">
-                                    <img src='imagenes/base_add.png' alt='<?php echo $addbase; ?>' title="<?php echo $addbase; ?>">
-                                </a><br><?php echo $addbase; ?>
-                            </td>
-                            <td class="borde">
-                                <a href='#' onclick="document.modflota.action='aut_flota.php';document.modflota.submit();">
-                                    <img src='imagenes/autterm.png' alt='<?php echo $autterm; ?>' title='<?php echo $autterm; ?>'>
-                                </a><br><?php echo $autterm; ?>
-                            </td>
-                            <td class="borde">
-                                <a href='#' onclick="document.modflota.action='dots_flota.php';document.modflota.submit();">
-                                    <img src='imagenes/dots.png' alt='<?php echo $dots; ?>' title='<?php echo $dots; ?>'>
-                                </a><br><?php echo $dots; ?>
-                            </td>
-                        <?php
-                        }
-                        ?>
-                        <td class="borde">
-                            <a href='#' onclick="document.termflota.submit();">
-                                <img src='imagenes/lista.png' alt='<?php echo $terminales; ?>' title='<?php echo $terminales; ?>'>
-                            </a><br><?php echo $terminales; ?>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-                <form name="modflota" action="#" method="POST">
-                    <input type="hidden" name="idflota" value="<?php echo $idflota ?>">
-                </form>
-                <form name="formdet" action="detalle_flota.php" method="POST">
-                    <input type="hidden" name="idflota" value="#">
-                </form>
-                <form name="termflota" action="terminales.php" method="POST">
-                    <input type="hidden" name="flota" value="<?php echo $idflota ?>">
-                </form>
-<?php
-}
-else {
-?>
+        <?php
+        }
+        else{
+        ?>
+            <p class='error'><?php echo $errnoflota; ?></p>
+    <?php
+        }
+    }
+    else {
+    ?>
         <h1><?php echo $h1perm; ?></h1>
-        <p class='error'><?php echo $permno; ?> &mdash; Permiso: <?php echo $permiso; ?>; IdFlota = <?php echo $idflota; ?>; Flota_uSu = <?php echo $flota_usu; ?></p>
-<?php
-}
-?>
+        <p class='error'><?php echo $errnoperm; ?></p>
+    <?php
+    }
+    ?>
     </body>
 </html>
