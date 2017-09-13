@@ -113,6 +113,9 @@ if ($permiso > 0){
     $objPHPExcel->getActiveSheet()->setTitle('(1) DATOS');
 
     if ($nflota > 0){
+        // Incrementamos la memoria:
+        ini_set('memory_limit', "256M");
+
         // Hoja de Contactos
         $objPHPExcel->getActiveSheet()->setCellValue('A1', 'FLOTA ' . $flota["FLOTA"]);
         $objPHPExcel->getActiveSheet()->mergeCells('A1:M1');
@@ -431,7 +434,176 @@ if ($permiso > 0){
         $rango = 'A' . $fila_inicio . ':V' . $fila_fin;
         $objPHPExcel->getActiveSheet()->getStyle($rango)->applyFromArray($estiloCelda);
 
+        // Hoja de Grupos:
+        // Fijamos como hoja activa la tercera (Grupos):
+        $objPHPExcel->createSheet();
+        $objPHPExcel->setActiveSheetIndex(2);
 
+        // Fijamos el título de la Hoja:
+        $objPHPExcel->getActiveSheet()->setTitle("(3) GSSI-TEL");
+
+        // Tamaño de papel (A4) y orientación (Apaisado)
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+
+        // Volvemos al estilo por defecto
+        $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
+        $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
+
+        // Pie de Página
+        $objPHPExcel->getActiveSheet()->getHeaderFooter()->setOddFooter("&$txtpagina &P de &N");
+
+        // Título de la Página
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'GSSI ' . $flota["FLOTA"]);
+
+        // Fecha:
+        $objPHPExcel->getActiveSheet()->setCellValue('A3', $thfecha);
+        $objPHPExcel->getActiveSheet()->getStyle('A3')->applyFromArray($estiloHeader);
+        $objPHPExcel->getActiveSheet()->setCellValue('B3', $fecha);
+        $objPHPExcel->getActiveSheet()->mergeCells('B3:C3');
+        $objPHPExcel->getActiveSheet()->getStyle('A3:C3')->applyFromArray($estiloCelda);
+
+        // Imprimimos los grupos:
+        $fila_inicio = 5;
+        $columna = -2;
+        $colmax = -1;
+        if ($ngrupos > 0){
+            // Encabezados:
+            for ($i = 1; $i <= $ncarpetas; $i++){
+                $fila = $fila_inicio;
+                $col_inicio = $columna + 2;
+                $columna = $columna + 2;
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, 'CARPETA' . ' ' . $i);
+                $objPHPExcel->getActiveSheet()->mergeCellsByColumnAndRow($columna, $fila, $columna + 1, $fila);
+                $fila++;
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $grupos[$i]['NOMBRE']);
+                $objPHPExcel->getActiveSheet()->mergeCellsByColumnAndRow($columna, $fila, $columna + 1, $fila);
+                $fila++;
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, 'GSSI');
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna + 1, $fila, strtoupper($thmnemo));
+                $fila++;
+                $carpeta = $grupo['CARPETA'];
+            }
+            // Imprimimos los grupos:
+            $columna = -2;
+            $fila_grupos = $fila;
+            foreach ($grupos as $grupocarpeta) {
+                $fila = $fila_grupos;
+                $columna = $columna + 2;
+                foreach ($grupocarpeta['GISSI'] as $indice => $vectgssi) {
+                    $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $vectgssi['GISSI']);
+                    $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna + 1, $fila, $vectgssi['MNEMO']);
+                    $fila++;
+                }
+
+            }
+            // Estilos:
+            $filamax = $objPHPExcel->getActiveSheet()->getHighestRow();
+            $colmax = $objPHPExcel->getActiveSheet()->getHighestColumn();
+            // Título:
+            $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($estiloTitulo);
+            $objPHPExcel->getActiveSheet()->mergeCells('A1:' . $colmax .'1');
+            // Celdas:
+            $objPHPExcel->getActiveSheet()->getStyle('A' . $fila_inicio . ':' . $colmax . $filamax)->applyFromArray($estiloCelda);
+            $objPHPExcel->getActiveSheet()->getStyle('A' . $fila_inicio . ':' . $colmax . ($fila_inicio + 2))->applyFromArray($estiloTh);
+            $relleno = FALSE;
+            for ($fila = $fila_grupos; $fila <= $filamax; $fila++){
+                if ($relleno){
+                    $objPHPExcel->getActiveSheet()->getStyle('A' . $fila .':' . $colmax . $fila)->applyFromArray($estiloRelleno);
+                }
+                $relleno = !($relleno);
+            }
+            $maxcol = PHPExcel_Cell::columnIndexFromString($colmax);
+            for ($i = 0; $i < $maxcol; $i++){
+                $objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($i)->setAutoSize(true);
+            }
+        }
+        else{
+            $objPHPExcel->getActiveSheet()->setCellValue("A8", $errnogrupos);
+            $objPHPExcel->getActiveSheet()->getStyle('A8')->applyFromArray($estiloError);
+            $objPHPExcel->getActiveSheet()->mergeCells('A8:L8');
+        }
+
+        // Fijamos como hoja activa la cuarta (Permisos):
+        $objPHPExcel->createSheet();
+        $objPHPExcel->setActiveSheetIndex(3);
+        // Fijamos el título de la Hoja:
+        $objPHPExcel->getActiveSheet()->setTitle("(4) ISSIs - PERMISOS");
+
+        // Volvemos al estilo por defecto
+        $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
+        $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
+
+        // Tamaño de papel (A4) y orientación (Apaisado)
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+
+        // Pie de Página
+        $objPHPExcel->getActiveSheet()->getHeaderFooter()->setOddFooter("&$txtpagina &P de &N");
+
+        // Añadimos los datos de la Flota
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', $h1permisos . " " . $flota["FLOTA"]);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:E1');
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($estiloTitulo);
+
+        // Fecha:
+        $objPHPExcel->getActiveSheet()->setCellValue('A3', $thfecha);
+        $objPHPExcel->getActiveSheet()->getStyle('A3')->applyFromArray($estiloHeader);
+        $objPHPExcel->getActiveSheet()->setCellValue('B3', $fecha);
+        $objPHPExcel->getActiveSheet()->mergeCells('B3:C3');
+        $objPHPExcel->getActiveSheet()->getStyle('A3:C3')->applyFromArray($estiloCelda);
+
+        // Imprimimos los permisos
+        if ($ncarpterm > 0){
+            // Encabezado:
+            $objPHPExcel->getActiveSheet()->setCellValue('D5', strtoupper($thorganiza));
+            $objPHPExcel->getActiveSheet()->setCellValue('B6', 'GSSI');
+            $objPHPExcel->getActiveSheet()->setCellValue('C6', strtoupper($thmnemo));
+            $columna = 3;
+            foreach ($carpetas as $carpeta) {
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, 6, $carpeta);
+                $columna++;
+            }
+            $fila = 6;
+            foreach ($grupos_consulta as $grupo) {
+                $gssi = $grupo['GISSI'];
+                $fila++;
+                $columna= 1;
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $gssi);
+                $columna++;
+                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $grupo['MNEMONICO']);
+                foreach ($carpetas as $carpeta) {
+                    $columna++;
+                    if ($permisos[$gssi][$carpeta] > 0){
+                        $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, 'X');
+                    }
+                }
+            }
+            // Estilos
+            $filamax = $objPHPExcel->getActiveSheet()->getHighestRow();
+            $colmax = $objPHPExcel->getActiveSheet()->getHighestColumn();
+            $objPHPExcel->getActiveSheet()->mergeCells('D5:' . $colmax . '5');
+            $objPHPExcel->getActiveSheet()->getStyle('D5:' . $colmax . '5')->applyFromArray($estiloTh);
+            $objPHPExcel->getActiveSheet()->getStyle('D5:' . $colmax . '5')->applyFromArray($estiloCelda);
+            $objPHPExcel->getActiveSheet()->getStyle('B6:' . $colmax . '6')->applyFromArray($estiloTh);
+            $objPHPExcel->getActiveSheet()->getStyle('B6:' . $colmax . '6')->applyFromArray($estiloCelda);
+            $objPHPExcel->getActiveSheet()->getStyle('B7:' . $colmax . $filamax)->applyFromArray($estiloCelda);
+            $objPHPExcel->getActiveSheet()->getStyle('B7:' . $colmax . $filamax)->applyFromArray($estiloCentro);
+            for ($fila = 8; $fila <= $filamax; $fila++){
+                if (($fila % 2) == 0){
+                    $objPHPExcel->getActiveSheet()->getStyle('B' . $fila .':' . $colmax . $fila)->applyFromArray($estiloRelleno);
+                }
+            }
+            $maxcol = PHPExcel_Cell::columnIndexFromString($colmax);
+            for ($i = 0; $i < $maxcol; $i++){
+                $objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($i)->setAutoSize(true);
+            }
+        }
+        else{
+            $objPHPExcel->getActiveSheet()->setCellValue("A5", $errnocarpterm);
+            $objPHPExcel->getActiveSheet()->getStyle('A5')->applyFromArray($estiloError);
+            $objPHPExcel->getActiveSheet()->mergeCells('A5:L5');
+        }
     }
     else{
         // Título de la Hoja

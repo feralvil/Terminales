@@ -94,6 +94,72 @@ if ($nflota > 0){
             $terminales[] = $terminal;
         }
         mysqli_free_result($res_termflota);
+        // Consulta de grupos:
+        $sql_grupos = "SELECT grupos_flotas.*, grupos.MNEMONICO FROM grupos_flotas, grupos";
+        $sql_grupos .= " WHERE (grupos_flotas.GISSI = grupos.GISSI) AND (grupos_flotas.FLOTA = " . $idflota . ")";
+        $sql_grupos .= " ORDER BY grupos_flotas.CARPETA, grupos_flotas.GISSI";
+        $res_grupos = mysqli_query($link, $sql_grupos) or die($errsqlgrupos. '": ' . mysqli_error($link));
+        $ngrupos = mysqli_num_rows($res_grupos);
+        if ($ngrupos > 0){
+            $grupos = array();
+            $carpeta = 0;
+            $ngcmax = 0;
+            $ngc = 0;
+            $gissicarpeta = array();
+            $grupos_consulta = array();
+            for ($i = 0; $i < $ngrupos; $i++){
+                $grupo = mysqli_fetch_assoc($res_grupos);
+                $grupos_consulta[$i] = $grupo;
+                if ($grupo['CARPETA'] > $carpeta){
+                    // Cerramos la carpeta anterior
+                    if (count ($gissicarpeta) > 0){
+                        $grupos[$carpeta]['NOMBRE'] =  $nombre;
+                        $grupos[$carpeta]['GISSI'] = $gissicarpeta;
+                        $gissicarpeta = array();
+                        if ($ngc > $ngcmax){
+                            $ngcmax = $ngc;
+                        }
+                        $ngc = 0;
+                    }
+                    $gissifila = array('GISSI' => $grupo['GISSI'], 'MNEMO' => $grupo['MNEMONICO']);
+                    $carpeta = $grupo['CARPETA'];
+                    $nombre = $grupo['NOMBRE'];
+                    array_push($gissicarpeta, $gissifila);
+                    $ngc++;
+                }
+                else{
+                    $gissifila = array('GISSI' => $grupo['GISSI'], 'MNEMO' => $grupo['MNEMONICO']);
+                    array_push($gissicarpeta, $gissifila);
+                    $ngc++;
+                }
+            }
+            $grupos[$carpeta]['NOMBRE'] =  $nombre;
+            $grupos[$carpeta]['GISSI'] = $gissicarpeta;
+            $ncarpetas = count($grupos);
+            // Consulta de permisos:
+            $sql_carpterm = "SELECT DISTINCT CARPTERM FROM permisos_flotas WHERE (FLOTA = " . $idflota . ")";
+            $sql_carpterm .= " ORDER BY permisos_flotas.CARPTERM ASC";
+            $res_carpterm = mysqli_query($link, $sql_carpterm) or die($errsqlcarpterm . ': ' . mysql_error());
+            $ncarpterm = mysqli_num_rows($res_carpterm);
+            if ($ncarpterm > 0){
+                $carpetas = array();
+                while ($row_carpterm = mysqli_fetch_assoc($res_carpterm)) {
+                    $carpetas[] = $row_carpterm['CARPTERM'];
+                }
+                mysqli_free_result($res_carpterm);
+                $permisos = array();
+                foreach ($grupos_consulta as $grupo) {
+                    foreach ($carpetas as $carpeta) {
+                        $gssi = $grupo['GISSI'];
+                        $sql_perm = "SELECT * FROM permisos_flotas WHERE (FLOTA = " . $idflota . ")";
+                        $sql_perm .= " AND (GISSI = " . $gssi . ") AND (CARPTERM = '" . $carpeta . "')";
+                        $res_perm =  mysqli_query($link, $sql_perm) or die($errsqlperm . ': ' . mysql_error());
+                        $nperm = mysqli_num_rows($res_perm);
+                        $permisos[$gssi][$carpeta] = $nperm;
+                    }
+                }
+            }
+        }
     }
 }
 

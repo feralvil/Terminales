@@ -72,6 +72,12 @@ $errrnoterm = "No se han encontrado terminales para la Flota";
 $errnoresult = "No se ha encontrado la flota seleccionada";
 $txtpagina = "Página";
 $thfecha = "Fecha";
+$errsqlgrupos = "Error en la consulta de grupos";
+$errnogrupos = "No se han encontrado grupos de la flota";
+$h1permisos = "PERMISOS-GRUPOS-GSSI";
+$errnocarpterm = "No se han encontrado permisos de la flota";
+$errsqlcarpterm = "Error en la consulta de carpetas";
+$errsqlperm = "Error en la consulta de permisos";
 $h3perm = "Permiso denegado";
 $errnoperm = "No dispone de permisos para acceder a esta ubicación";
 ?>

@@ -72,6 +72,12 @@ $errrnoterm = "No s'han trobat terminals per a la Flota";
 $errnoresult = "No s'ha trobat la flota seleccionada";
 $txtpagina = "Pàgina";
 $thfecha = "Data";
+$errsqlgrupos = "Error en la consulta de grups";
+$errnogrupos = "No s'han trobat grups de la flota";
+$h1permisos = "PERMISOS-GRUPS-GSSI";
+$errnocarpterm = "No s'han trobat permisos de la flota";
+$errsqlcarpterm = "Error en la consulta de carpetes";
+$errsqlperm = "Error en la consulta de permisos";
 $h3perm = "Permís denegat";
 $errnoperm = "No disposa de permisos per a accedir a aquesta ubicació";
 ?>

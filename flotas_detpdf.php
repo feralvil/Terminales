@@ -107,7 +107,7 @@ if ($permiso > 0){
     // Consultas a la BBDD
     require_once 'sql/flotas_detexportar.php';
     if ($nflota > 0){
-        ini_set('memory_limit', "64M");
+        ini_set('memory_limit', "256M");
         // Cabecera:
         $h1txt = '<h1>' . $h1 . ' ' .$flota['FLOTA'] . '</h1>';
         $pdf->writeHTML($h1txt, true, true, true, false, '');
@@ -385,6 +385,147 @@ if ($permiso > 0){
             $pdf->Ln(5);
         }
 
+        // Datos de Grupos:
+        // Añadir una página
+        $pdf->AddPage();
+
+        // Cabecera:
+        $h1txt = '<h1> GSSI - ' . $flota['FLOTA'] . '</h1>';
+        $pdf->writeHTML($h1txt, true, true, true, false, '');
+        $pdf->Ln(5);
+
+        // Tabla con la fecha:
+        $tablahtml = '<table border = "1">';
+        $tablahtml .= '<tr>';
+        $tablahtml .=  '<th style="font-weight:bold;width:25mm;background-color:#CCCCCC;">' . $thfecha . '</th>';
+        $tablahtml .= '<td style="width:35mm;">' . $fecha . '</td>';
+        $tablahtml .= '</tr>';
+        $tablahtml .= '</table>';
+        $pdf->writeHTML($tablahtml, true, true, true, false, '');
+        $pdf->Ln(5);
+
+        // Imprimimos los grupos:
+        if ($ngrupos > 0){
+            $ancho = floor(270/$ncarpetas/2);
+            $pdf->SetFont('helvetica', '', 8);
+            $tablahtml = '<table border = "1">';
+            // Encabezados;
+            $tablahtml .= '<thead>';
+            $tablahtml .= '<tr>';
+            for ($i = 1; $i <= $ncarpetas; $i++){
+                $tablahtml .= '<th colspan="2" style="font-weight:bold;width:' . $ancho * 2 . 'mm;text-align:center;">CARPETA ' . $i . '</th>';
+            }
+            $tablahtml .= '</tr>';
+            $tablahtml .= '<tr>';
+            for ($i = 1; $i <= $ncarpetas; $i++){
+                $tablahtml .= '<th colspan="2" style="font-weight:bold;width:' . $ancho * 2 . 'mm;text-align:center;">' .  $grupos[$i]['NOMBRE'] . '</th>';
+            }
+            $tablahtml .= '</tr>';
+            $tablahtml .= '<tr>';
+            for ($i = 1; $i <= $ncarpetas; $i++){
+                $tablahtml .= '<th style="font-weight:bold;width:' . $ancho . 'mm;text-align:center;">GSSI</th>';
+                $tablahtml .= '<th style="font-weight:bold;width:' . $ancho . 'mm;text-align:center;">' . strtoupper($thmnemo) . '</th>';
+            }
+            $tablahtml .= '</tr>';
+            $tablahtml .= '</thead>';
+            $relleno = false;
+            for ($i = 0; $i < $ngcmax; $i++){
+                $tablahtml .= '<tr';
+                if ($relleno){
+                    $tablahtml .= ' style="background-color:#EEEEEE;"';
+                }
+                $tablahtml .= '>';
+                for($j = 1; $j <= $ncarpetas; $j++){
+                    if ($i < count($grupos[$j]['GISSI'])){
+                        $tablahtml .= '<td style="width:' . $ancho . 'mm;">' . $grupos[$j]['GISSI'][$i]['GISSI'] . '</td>';
+                        $tablahtml .= '<td style="width:' . $ancho . 'mm;">' . $grupos[$j]['GISSI'][$i]['MNEMO'] . '</td>';
+                    }
+                    else{
+                        $tablahtml .= '<td style="width:' . $ancho . 'mm;">&nbsp;</td>';
+                        $tablahtml .= '<td style="width:' . $ancho . 'mm;">&nbsp;</td>';
+                    }
+                }
+                $tablahtml .= '</tr>';
+                $relleno = !($relleno);
+            }
+            $tablahtml .= '</table>';
+            $pdf->writeHTML($tablahtml, true, true, true, false, '');
+            $pdf->Ln(5);
+        }
+        else{
+            $h1txt = '<p style="color:#FF0000;">' . $errnogrupos . '</p>';
+            $pdf->writeHTML($h1txt, true, true, true, false, '');
+            $pdf->Ln(5);
+        }
+
+        // Datos de Permisos:
+        // Añadir una página
+        $pdf->AddPage();
+
+        // Cabecera:
+        $h1txt = '<h1>' . $h1permisos . ' ' . $flota['FLOTA'] . '</h1>';
+        $pdf->writeHTML($h1txt, true, true, true, false, '');
+        $pdf->Ln(5);
+
+        // Tabla con la fecha:
+        $tablahtml = '<table border = "1">';
+        $tablahtml .= '<tr>';
+        $tablahtml .=  '<th style="font-weight:bold;width:25mm;background-color:#CCCCCC;">' . $thfecha . '</th>';
+        $tablahtml .= '<td style="width:35mm;">' . $fecha . '</td>';
+        $tablahtml .= '</tr>';
+        $tablahtml .= '</table>';
+        $pdf->writeHTML($tablahtml, true, true, true, false, '');
+        $pdf->Ln(5);
+
+        if ($ncarpterm > 0){
+
+            $ancho = floor(220/$ncarpterm);
+            $tablahtml = '<table border = "1">';
+            // Encabezados;
+            $tablahtml .= '<thead>';
+            $tablahtml .= '<tr>';
+            $tablahtml .= '<th colspan="2" style="font-weight:bold;width:50mm;text-align:center;">&nbsp;</th>';
+            $tablahtml .= '<th colspan="' . $ncarpterm . '" style="font-weight:bold;width:' . $ancho * $ncarpterm .'mm;text-align:center;">' . strtoupper($thorganiza) . '</th>';
+            $tablahtml .= '</tr>';
+            $tablahtml .= '<tr>';
+            $tablahtml .= '<th style="font-weight:bold;width:15mm;text-align:center;">GSSI</th>';
+            $tablahtml .= '<th style="font-weight:bold;width:35mm;text-align:center;">' . strtoupper($thmnemo) . '</th>';
+            foreach ($carpetas as $carpeta) {
+                $tablahtml .= '<th style="font-weight:bold;width:' . $ancho . 'mm;text-align:center;">' . $carpeta . '</th>';
+            }
+            $tablahtml .= '</tr>';
+            $tablahtml .= '</thead>';
+            // Imprimimos los permisos:
+            $relleno = FALSE;
+            foreach ($grupos_consulta as $grupo) {
+                $tablahtml .= '<tr';
+                if ($relleno){
+                    $tablahtml .= ' style="background-color:#EEEEEE;"';
+                }
+                $tablahtml .= '>';
+                $gssi = $grupo['GISSI'];
+                $tablahtml .= '<td style="width:15mm;">' . $gssi . '</td>';
+                $tablahtml .= '<td style="width:35mm;">' . $grupo['MNEMONICO'] . '</td>';
+                foreach ($carpetas as $carpeta) {
+                    if ($permisos[$gssi][$carpeta] > 0){
+                        $tablahtml .= '<td style="width:' . $ancho . 'mm;text-align:center;">X</td>';
+                    }
+                    else{
+                        $tablahtml .= '<td style="width:' . $ancho . 'mm;">&nbsp;</td>';
+                    }
+                }
+                $tablahtml .= '</tr>';
+                $relleno = !($relleno);
+            }
+            $tablahtml .= '</table>';
+            $pdf->writeHTML($tablahtml, true, true, true, false, '');
+            $pdf->Ln(5);
+        }
+        else{
+            $h1txt = '<p style="color:#FF0000;">' . $errnocarpterm . '</p>';
+            $pdf->writeHTML($h1txt, true, true, true, false, '');
+            $pdf->Ln(5);
+        }
     }
     else{
         $h1txt = '<h1>' . $h1 . '</h1>';
