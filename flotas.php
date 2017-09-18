@@ -48,6 +48,11 @@ if ($flota_usu == 100) {
         <h1>
             <?php echo $h1; ?> &mdash; <a href="flotas.php" target="_blank"><img src="imagenes/newtab.png" alt="<?php echo $newtab;?>" title="<?php echo $newtab;?>"></a>
         </h1>
+        <?php
+        if (isset ($_POST['update'])){
+            require_once 'mensflash.php';
+        }
+        ?>
         <form action="flotas.php" name="formflotas" id="formflotas" method="POST">
             <input type="hidden" name="pagina" id="inputpag" value="<?php echo $pagina;?>" />
             <input type="hidden" name="npaginas" id="inputnpag" value="<?php echo $npaginas;?>" />

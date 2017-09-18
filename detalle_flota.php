@@ -52,9 +52,6 @@ else {
 <?php
 if ($permiso > 0) {
     require_once 'sql/flotas_detalle.php';
-    if (isset ($update)){
-        require_once 'mensflash.php';
-    }
 ?>
         <form name="exportar" id="export" action="#" method="POST" target="_blank">
             <input type="hidden" name="idflota" value="<?php echo $idflota;?>">
@@ -69,6 +66,9 @@ if ($permiso > 0) {
             </h1>
         </form>
         <?php
+        if (isset ($_POST['update'])){
+            require_once 'mensflash.php';
+        }
         // Select de Flotas
         if ($permiso > 1){
         ?>

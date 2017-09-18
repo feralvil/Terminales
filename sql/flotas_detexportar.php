@@ -160,6 +160,9 @@ if ($nflota > 0){
                 }
             }
         }
+        else{
+            $ncarpterm = 0;
+        }
     }
 }
 
