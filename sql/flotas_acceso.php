@@ -17,4 +17,5 @@ if ($nflota > 0){
     $flota = mysqli_fetch_assoc($res_flota);
     mysqli_free_result($res_flota);
 }
+mysqli_close($link);
 ?>

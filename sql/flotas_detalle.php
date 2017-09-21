@@ -40,7 +40,7 @@ if ($nflota > 0){
         $municipio = mysqli_fetch_assoc($res_muni);
         mysqli_free_result($res_muni);
     }
-    // Consulta de la tabla municipios:
+    // Consulta de la tabla organizaciones:
     $idorg = $flota['ORGANIZACION'];
     $sql_organiza = "SELECT * FROM organizaciones WHERE (organizaciones.ID = $idorg)";
     $res_organiza = mysqli_query($link, $sql_organiza) or die($errsqlorganiza . ': ' . mysqli_error($link));
