@@ -21,9 +21,13 @@ $RECYCLE.BIN/
 
 # Sincronización FTP
 .remote-sync.json
+ftpsync.settings
 
 # Fichero BBDD
 conexion.php
+
+#Fichero gitignore
+.gitignore
 
 #Directorio archivo
 archivo/*

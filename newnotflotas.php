@@ -42,8 +42,8 @@ if ($flota_usu == 100) {
 }
 
 // Iniciamos las funciones de correo:
-ini_set("SMTP", "smtp.difusio.gva.es");
-ini_set('sendmail_from', "comdes_informa@difusio.gva.es");
+//ini_set("SMTP", "smtp.difusio.gva.es");
+//ini_set('sendmail_from', "comdes_informa@difusio.gva.es");
 $ndestinatarios = 0;
 $destinatarios = "";
 $mailnom = array("Oficina COMDES", "Fernando Alfonso", "Manuel Cava", "Santiago Vieco", "Vicente Saurí", "Laura Segura");
@@ -60,7 +60,6 @@ if (isset ($idm)){
     }
     $htmlhead = '<!DOCTYPE html><html><head>';
     $htmlhead .= '<title>'.$asunto.'</title>';
-    $htmlhead .= '<link rel="StyleSheet" type="text/css" href="estilo.css">';
     $htmlhead .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
     $htmlhead .= '<style>';
     $htmlhead .= 'body {
@@ -113,6 +112,14 @@ if (isset ($idm)){
     }
     td {
         font-size : 8pt;
+        color: #00407A;
+    }
+    hr{
+        border: 1px solid red;
+    }
+    .minifirma{
+        font-size : 6pt;
+        color: #00407A;
     }
     ';
     $htmlhead .= '</style>';
@@ -122,7 +129,6 @@ if (isset ($idm)){
     $htmlmail .= $mensbbdd;
     $htmlbody2 = '</body>';
     $htmlpie = '</html>';
-    $htmlmens = $htmlhead.$htmlbody.$htmlmail.$htmlbody2.$htmlpie;
     $tabladest = "
         <table>
             <tr>
@@ -136,6 +142,8 @@ if (isset ($idm)){
         $idfprev = 0;
         $par = 0;
         // Obtenemos los contactos del formulario (idflota-idcontacto)
+        $destmail = array();
+        $destnom = array();
         for ($i = 0; $i < count($idflotacont); $i++){
             $idfc = explode("-", $idflotacont[$i]);
             $idflota = $idfc["0"];
@@ -152,8 +160,6 @@ if (isset ($idm)){
             $sql_contacto = "SELECT NOMBRE, MAIL FROM contactos WHERE ID = '$idc'";
             $res_contacto = mysql_query($sql_contacto) or die("Error en la consulta de contacto: " . mysql_error());
             $ncontacto = mysql_num_rows($res_contacto);
-            $destmail = array();
-            $destnom = array();
             if ($ncontacto > 0) {
                 $row_contacto = mysql_fetch_array($res_contacto);
                 $emailbd = $row_contacto["MAIL"];
@@ -184,7 +190,7 @@ if (isset ($idm)){
                     " ;
         // Creamos el mensaje con PHPMailer:
         $mail = new PHPMailer;
-        $mail->SMTPDebug = 0;
+        $mail->SMTPDebug = 0;//2;
         $mail->Debugoutput = 'html';
         $mail->CharSet = 'UTF-8';                       // Fijamos la codificación de caracteres
         $mail->isSMTP();                                // Usamos SMTP para el envío
@@ -193,8 +199,36 @@ if (isset ($idm)){
         $mail->Username = 'comdes_informa';                 // Establecemos el Remitente
         $mail->Password = "sU4TwTw7Dw";
         $mail->From = 'comdes_informa@difusio.gva.es';  // Establecemos el Remitente
-        $mail->FromName = 'COMDES Difussió';
-        $mail->addAddress('comdes_informa@difusio.gva.es', 'Oficina COMDES');
+        $mail->FromName = 'COMDES Difussió';        
+        // Incrustamos la imagen:
+        $mail->AddEmbeddedImage('imagenes/logochmev.jpg', 'logoimg', 'logochmev.jpg');
+        $htmlfirma .= '<p>&nbsp;</p>';
+        $htmlfirma = '<hr />';
+        $htmlfirma .= '<table>';
+        $htmlfirma .= '<tr>';
+        $htmlfirma .= '<td style="widht: 40%; text-align: center">';
+        $htmlfirma .= '<img src="cid:logoimg" />';
+        $htmlfirma .= '</td>';
+        $htmlfirma .= '<td>';
+        $htmlfirma .= '<strong>Oficina COMDES</strong> <br />';
+        $htmlfirma .= '<strong>Servei de Telecomunicacions i Societat Digital</strong> <br />';
+        $htmlfirma .= '<strong>Direcció General de Tecnologies de la Informació i les Comunicacions</strong> <br />';
+        $htmlfirma .= 'C/ Castán Tobeñas, 77 - 46018 - València <br />';
+        $htmlfirma .= 'Ciutat Administrativa 9 d\'Octubre - Edifici A <br />';
+        $htmlfirma .= 'Tfn: 963985300 - Correu: <a href="mailto:comdes@gva.es">comdes@gva.es</a> <br />';
+        $htmlfirma .= 'Twitter: <a href="https://twitter.com/GVAcomdes">@GVAcomdes</a> - ';
+        $htmlfirma .= 'Web: <a href="http://www.comdes.gva.es/">www.comdes.gva.es</a>';
+        $htmlfirma .= '</td>';
+        $htmlfirma .= '</tr>';
+        $htmlfirma .= '</table>';
+        $htmlfirma .= '<hr />';
+        $htmlfirma .= '<p class="minifirma">';
+        $htmlfirma .= 'Correu electrònic amb informació confidencial. Si no és el destinatari no està autoritzat a utilitzar-lo,. Si l\'ha rebut per error, per favor destruisca\'l. <br />';
+        $htmlfirma .= 'Correo electrónico con información confidencial. Si no es el destinatario no está autorizado a su uso. Si lo ha recibido por error, por favor destrúyalo. <br />';
+        $htmlfirma .= 'Confidential information contained in this e-mail. Any use of this mail prohibited other than its intended recipient. If you received this in error, please delete it. <br />';
+        $htmlfirma .= '</p>';
+        $htmlmens = $htmlhead.$htmlbody.$htmlmail.$htmlbody2.$htmlfirma.$htmlpie;
+        $mail->addAddress('comdes_informa@difusio.gva.es', 'Difusión COMDES');
         for ($i=0; $i < count($destmail); $i++) {
             $mail->addBCC($destmail[$i], $destnom[$i]);
         }
