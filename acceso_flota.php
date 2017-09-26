@@ -19,11 +19,13 @@ include_once('autenticacion.php');
 $permiso = 0;
 if ($flota_usu == 100) {
     $permiso = 2;
-}
-else{
-    if ($flota_usu == $idflota) {
-        $permiso = 1;
+    if ($idflota == 0){
+        $idflota = $flota_usu;
     }
+}
+else {
+    $permiso = 1;
+    $idflota = $flota_usu;
 }
 ?>
 <!DOCTYPE html>
@@ -63,7 +65,21 @@ if ($permiso > 0) {
             <table>
                 <tr>
                     <th><?php echo $txtusuario; ?></th>
-                    <td colspan="3"><?php echo $flota["LOGIN"]; ?></td>
+                    <td colspan="3">
+                        <?php
+                        if ($permiso > 1){                            
+                        ?>
+                            <input type='text' name='login' id="login" size='20' maxlength='20' value="<?php echo $flota["LOGIN"];?>">
+                        <?php
+                        }
+                        else{
+                            echo $flota["LOGIN"];                    
+                        ?>
+                            <input type='hidden' name='login' id="login" value="<?php echo $flota["LOGIN"];?>">
+                        <?php
+                        }
+                        ?>                            
+                    </td>
                 </tr>
                 <tr>
                     <th class="t4c"><?php echo $txtpass1; ?></th>

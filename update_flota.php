@@ -76,7 +76,7 @@ if ($permiso > 0) {
                 $error = $errpwd;
             }
             else {
-                $sql_update = "UPDATE FLOTAS SET PASSWORD = '$passwd1' WHERE ID = $idflota";
+                $sql_update = "UPDATE FLOTAS SET PASSWORD = '$passwd1', LOGIN = '$login' WHERE ID = $idflota";
             }
             $res_update = mysql_query($sql_update) or die (mysql_error($link));
         }
@@ -90,8 +90,8 @@ if ($permiso > 0) {
             if (($rangoini != "")&&($rangofin != "")){
                 $rango = $rangoini . "-" . $rangofin;
             }
-            $sql_update = "UPDATE flotas SET FLOTA='$flota', ACRONIMO='$acronimo', LOGIN='$login', ";
-            $sql_update .= "DOMICILIO='$domicilio', ORGANIZACION=$organiza, CP='$cp', INE='$ine', AMBITO='$ambito', " ;
+            $sql_update = "UPDATE flotas SET FLOTA='$flota', ACRONIMO='$acronimo', DOMICILIO='$domicilio', ";
+            $sql_update .= "ORGANIZACION=$organiza, CP='$cp', INE='$ine', AMBITO='$ambito', " ;
             $sql_update .= "ENCRIPTACION='$encriptacion', ACTIVO='$activa', RANGO = '$rango' WHERE ID=$idflota";
             $mensaje = $mensedi;
             $error = $erredi;
